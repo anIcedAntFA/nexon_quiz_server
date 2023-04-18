@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"nexon_quiz/components/appctx"
 	"nexon_quiz/middleware"
 	"os"
@@ -65,6 +66,12 @@ func runService(
 	router.Use(middleware.Recover(appContext))
 
 	v1 := router.Group("/v1")
+
+	v1.GET("/hello", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "hello 500 ae",
+		})
+	})
 
 	auth := v1.Group("/auth")
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
