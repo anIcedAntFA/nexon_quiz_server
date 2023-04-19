@@ -14,11 +14,12 @@ const EntityName = "User"
 
 type User struct {
 	common.SQLModel
-	Email    string   `json:"email" gorm:"column:email;"`
-	Password string   `json:"-" gorm:"column:password;"`
-	Salt     string   `json:"-" gorm:"column:salt;"`
-	Username string   `json:"username" gorm:"column:username;"`
-	Role     UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
+	Email     string   `json:"email" gorm:"column:email;"`
+	Password  string   `json:"-" gorm:"column:password;"`
+	Salt      string   `json:"-" gorm:"column:salt;"`
+	Username  string   `json:"username" gorm:"column:username;"`
+	Role      UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
+	IsDeleted int      `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
 func (User) TableName() string {
@@ -39,11 +40,12 @@ func (u *User) GetRole() string {
 
 type UserCreate struct {
 	common.SQLModel
-	Email    string   `json:"email" gorm:"column:email;"`
-	Password string   `json:"password" gorm:"column:password;"`
-	Username string   `json:"username" gorm:"column:username;"`
-	Salt     string   `json:"-" gorm:"column:salt;"`
-	Role     UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
+	Email     string   `json:"email" gorm:"column:email;"`
+	Password  string   `json:"password" gorm:"column:password;"`
+	Username  string   `json:"username" gorm:"column:username;"`
+	Salt      string   `json:"-" gorm:"column:salt;"`
+	Role      UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
+	IsDeleted int      `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
 func (UserCreate) TableName() string {
@@ -59,10 +61,11 @@ func (user *UserCreate) BeforeCreate(tx *gorm.DB) error {
 
 type UserUpdate struct {
 	common.SQLModel
-	Password *string `json:"password" gorm:"column:password;"`
-	Username *string `json:"username" gorm:"column:username;"`
-	Salt     string  `json:"-" gorm:"column:salt;"`
-	Status   int     `json:"status" gorm:"column:status;default:1;"`
+	Password  *string  `json:"password" gorm:"column:password;"`
+	Username  *string  `json:"username" gorm:"column:username;"`
+	Salt      string   `json:"-" gorm:"column:salt;"`
+	Role      UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
+	IsDeleted *int     `json:"-" gorm:"column:is_deleted;"`
 }
 
 func (UserUpdate) TableName() string {

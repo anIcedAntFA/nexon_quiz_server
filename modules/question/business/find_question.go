@@ -39,11 +39,5 @@ func (biz findQuestionBusiness) FindQuestion(
 		return nil, common.ErrorEntityNotFound(questionentity.EntityName, err)
 	}
 
-	// var questionResponse questionentity.Question
-
-	// questionResponse = questionentity.Question{
-	// 	 Id
-	// }
-
 	return result, err
 }

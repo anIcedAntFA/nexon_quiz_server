@@ -23,6 +23,7 @@ type Question struct {
 	MinusScore int                   `json:"minus_score" gorm:"column:minus_score;"`
 	Time       int                   `json:"time" gorm:"column:time;"`
 	Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
+	IsDeleted  int                   `json:"-" gorm:"column:is_deleted;"`
 }
 
 func (Question) TableName() string {
@@ -43,7 +44,7 @@ type QuestionCreate struct {
 	PlusScore  int                `json:"plus_score" gorm:"column:plus_score;"`
 	MinusScore int                `json:"minus_score" gorm:"column:minus_score;"`
 	Time       int                `json:"time" gorm:"column:time;"`
-	// Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
+	IsDeleted  int                `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
 func (QuestionCreate) TableName() string {
@@ -84,6 +85,7 @@ type QuestionUpdate struct {
 	MinusScore *int                `json:"minus_score" gorm:"column:minus_score;"`
 	Time       *int                `json:"time" gorm:"column:time;"`
 	Status     *int                `json:"status" gorm:"column:status;default:1;"`
+	IsDeleted  *int                `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
 func (QuestionUpdate) TableName() string {

@@ -13,9 +13,10 @@ const EntityName = "Answer"
 
 type Answer struct {
 	common.SQLModel
-	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
+	QuestionId uuid.UUID `json:"-" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    int       `json:"correct" gorm:"column:correct"`
+	Correct    bool      `json:"correct" gorm:"column:correct"`
+	IsDeleted  bool      `json:"-" gorm:"column:is_deleted;"`
 }
 
 func (Answer) TableName() string {
@@ -26,11 +27,12 @@ type AnswerCreate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    int       `json:"correct" gorm:"column:correct"`
+	Correct    bool      `json:"correct" gorm:"column:correct"`
+	IsDeleted  bool      `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
-func (*AnswerCreate) TableName() string {
-	return "answers"
+func (AnswerCreate) TableName() string {
+	return Answer{}.TableName()
 }
 
 func (ac *AnswerCreate) BeforeCreate(tx *gorm.DB) error {
@@ -39,6 +41,8 @@ func (ac *AnswerCreate) BeforeCreate(tx *gorm.DB) error {
 
 	return err
 }
+
+type AnswersCreate = []AnswerCreate
 
 func (ac *AnswerCreate) Validate() error {
 	dataContent := ac.Content
@@ -54,7 +58,8 @@ type AnswerUpdate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    int       `json:"correct" gorm:"column:correct"`
+	Correct    bool      `json:"correct" gorm:"column:correct"`
+	IsDeleted  bool      `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
 func (*AnswerUpdate) TableName() string {
