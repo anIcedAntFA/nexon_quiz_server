@@ -7,6 +7,7 @@ import (
 	"nexon_quiz/middleware"
 	"os"
 
+	questiontransport "nexon_quiz/modules/question/transport"
 	usertransport "nexon_quiz/modules/user/transport"
 
 	"github.com/gin-contrib/cors"
@@ -76,6 +77,12 @@ func runService(
 	auth := v1.Group("/auth")
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
+
+	question := v1.Group(
+		"/question",
+		middleware.RequiredAuthorization(appContext),
+		middleware.RequiredRole(appContext, "admin"))
+	question.POST("/new", questiontransport.HandleCreateNewQuestion(appContext))
 
 	router.Run()
 

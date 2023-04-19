@@ -18,7 +18,8 @@ type Question struct {
 	Category        string                `json:"category" gorm:"column:category;"`
 	Type            QuestionType          `json:"type" gorm:"column:type;"`
 	Difficulty      QuestionDifficulty    `json:"difficulty" gorm:"column:difficulty;"`
-	Score           int                   `json:"score" gorm:"column:score"`
+	PlusScore       int                   `json:"plus_score" gorm:"column:plus_score"`
+	MinusScore      int                   `json:"minus_score" gorm:"column:minus_score"`
 	Time            int                   `json:"time" gorm:"column:time"`
 	Status          int                   `json:"status" gorm:"column:status;default:1;"`
 	Answers         *answerentity.Answers `json:"answers" gorm:"preload:false"`
@@ -34,11 +35,13 @@ func (q *Question) GetQuestionId() uuid.UUID {
 
 type QuestionCreate struct {
 	common.SQLModel `json:",inline"`
+	OwnerId         uuid.UUID          `json:"-" gorm:"column:owner_id;"`
 	Content         string             `json:"content" gorm:"column:content;"`
 	Category        string             `json:"category" gorm:"column:category;"`
 	Type            QuestionType       `json:"type" gorm:"column:type;"`
 	Difficulty      QuestionDifficulty `json:"difficulty" gorm:"column:difficulty;"`
-	Score           int                `json:"score" gorm:"column:score"`
+	PlusScore       int                `json:"plus_score" gorm:"column:plus_score"`
+	MinusScore      int                `json:"minus_score" gorm:"column:minus_score"`
 	Time            int                `json:"time" gorm:"column:time"`
 }
 
@@ -69,7 +72,8 @@ type QuestionUpdate struct {
 	Category        *string               `json:"category" gorm:"column:category;"`
 	Type            *QuestionType         `json:"type" gorm:"column:type;"`
 	Difficulty      *QuestionDifficulty   `json:"difficulty" gorm:"column:difficulty;"`
-	Score           *int                  `json:"score" gorm:"column:score"`
+	PlusScore       *int                  `json:"plus_score" gorm:"column:plus_score"`
+	MinusScore      *int                  `json:"minus_score" gorm:"column:minus_score"`
 	Time            *int                  `json:"time" gorm:"column:time"`
 	Status          *int                  `json:"status" gorm:"column:status;default:1;"`
 	Answers         *answerentity.Answers `json:"answers" gorm:"preload:false"`

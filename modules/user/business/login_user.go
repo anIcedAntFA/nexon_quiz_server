@@ -2,6 +2,7 @@ package userbusiness
 
 import (
 	"context"
+	"log"
 	"nexon_quiz/common"
 	"nexon_quiz/components/tokenprovider"
 	userentity "nexon_quiz/modules/user/entity"
@@ -65,11 +66,16 @@ func (biz *loginBusiness) Login(
 	}
 
 	payload := tokenprovider.TokenPayload{
-		UserId: user.Id,
-		Role:   user.Role.String(),
+		UserId:   user.Id,
+		Role:     user.Role.String(),
+		UserName: user.UserName,
 	}
 
+	log.Println("payload", payload)
+
 	accessToken, err := biz.tokenProvider.Generate(payload, biz.expiry)
+
+	log.Println("accessToken", accessToken)
 
 	if err != nil {
 		return nil, nil, common.ErrorInternal(err)
