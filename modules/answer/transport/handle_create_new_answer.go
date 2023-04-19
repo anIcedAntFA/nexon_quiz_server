@@ -9,24 +9,24 @@ import (
 	answerstorage "nexon_quiz/modules/answer/storage"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func HandleCreateNewAnswer(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		questionId, err := uuid.Parse(ctx.Param("question_id"))
+		// questionId, err := uuid.Parse(ctx.Param("question_id"))
+		// log.Println("questionId", questionId)
 
-		if err != nil {
-			panic(common.ErrorInvalidRequest(err))
-		}
+		// if err != nil {
+		// 	panic(common.ErrorInvalidRequest(err))
+		// }
 
 		var newAnswer answerentity.AnswerCreate
 
-		if err := ctx.ShouldBind(&newAnswer); err != nil {
+		if err := ctx.ShouldBindJSON(&newAnswer); err != nil {
 			panic(err)
 		}
 
-		newAnswer.QuestionId = questionId
+		// newAnswer.QuestionId = questionId
 
 		db := appCtx.GetMainDBConnection()
 

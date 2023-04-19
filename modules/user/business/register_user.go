@@ -36,7 +36,7 @@ func (biz *registerUserBusiness) Register(ctx context.Context, newUser *userenti
 	user, _ := biz.storage.FindUser(ctx, map[string]interface{}{"email": newUser.Email})
 
 	if user != nil {
-		if user.Status == 0 {
+		if user.IsDeleted == 0 {
 			return userentity.ErrorUserDisabledOrBanned
 		}
 

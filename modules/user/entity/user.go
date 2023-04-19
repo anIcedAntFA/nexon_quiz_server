@@ -19,7 +19,6 @@ type User struct {
 	Salt     string   `json:"-" gorm:"column:salt;"`
 	Username string   `json:"username" gorm:"column:username;"`
 	Role     UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
-	Status   int      `json:"status" gorm:"column:status;default:1;"`
 }
 
 func (User) TableName() string {
@@ -45,7 +44,6 @@ type UserCreate struct {
 	Username string   `json:"username" gorm:"column:username;"`
 	Salt     string   `json:"-" gorm:"column:salt;"`
 	Role     UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
-	Status   int      `json:"status" gorm:"column:status;default:1;"`
 }
 
 func (UserCreate) TableName() string {

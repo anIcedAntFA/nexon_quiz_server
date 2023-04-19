@@ -1,7 +1,6 @@
 package questiontransport
 
 import (
-	"log"
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
@@ -32,8 +31,6 @@ func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 		if err := business.CreateQuestion(ctx.Request.Context(), &newQuestion); err != nil {
 			panic(err)
 		}
-
-		log.Println("questionId", newQuestion)
 
 		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(newQuestion.Id))
 	}

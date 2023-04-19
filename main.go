@@ -82,12 +82,14 @@ func runService(
 		middleware.RequiredAuthorization(appContext),
 		middleware.RequiredRole(appContext, "admin"))
 	question.POST("/new", questiontransport.HandleCreateNewQuestion(appContext))
+	question.GET("/:id", questiontransport.HandleGetQuestion(appContext))
 
 	answer := v1.Group(
 		"/answer",
 		middleware.RequiredAuthorization(appContext),
 		middleware.RequiredRole(appContext, "admin"))
 	answer.POST("/new", answertransport.HandleCreateNewAnswer(appContext))
+	answer.POST("/new-list", answertransport.HandleCreateNewAnswer(appContext))
 
 	router.Run()
 

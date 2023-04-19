@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 const EntityName = "Question"
@@ -21,7 +22,6 @@ type Question struct {
 	PlusScore  int                   `json:"plus_score" gorm:"column:plus_score;"`
 	MinusScore int                   `json:"minus_score" gorm:"column:minus_score;"`
 	Time       int                   `json:"time" gorm:"column:time;"`
-	Status     int                   `json:"status" gorm:"column:status;default:1;"`
 	Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 }
 
@@ -43,10 +43,18 @@ type QuestionCreate struct {
 	PlusScore  int                `json:"plus_score" gorm:"column:plus_score;"`
 	MinusScore int                `json:"minus_score" gorm:"column:minus_score;"`
 	Time       int                `json:"time" gorm:"column:time;"`
+	// Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 }
 
 func (QuestionCreate) TableName() string {
 	return Question{}.TableName()
+}
+
+func (qc *QuestionCreate) BeforeCreate(tx *gorm.DB) error {
+	id, err := uuid.NewRandom()
+	qc.Id = uuid.UUID(id)
+
+	return err
 }
 
 func (qc *QuestionCreate) Validate() error {
