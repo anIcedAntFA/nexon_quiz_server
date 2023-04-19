@@ -2,7 +2,7 @@ package common
 
 type SimpleUser struct {
 	SQLModel
-	UserName string `json:"user_name" gorm:"column:user_name;"`
+	Username string `json:"username" gorm:"column:username;"`
 	Role     string `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
 }
 

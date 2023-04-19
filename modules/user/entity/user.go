@@ -17,7 +17,7 @@ type User struct {
 	Email           string   `json:"email" gorm:"column:email;"`
 	Password        string   `json:"-" gorm:"column:password;"`
 	Salt            string   `json:"-" gorm:"column:salt;"`
-	UserName        string   `json:"user_name" gorm:"column:user_name;"`
+	Username        string   `json:"username" gorm:"column:username;"`
 	Role            UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
 	Status          int      `json:"status" gorm:"column:status;default:1;"`
 }
@@ -42,7 +42,7 @@ type UserCreate struct {
 	common.SQLModel `json:",inline"`
 	Email           string   `json:"email" gorm:"column:email;"`
 	Password        string   `json:"password" gorm:"column:password;"`
-	UserName        string   `json:"user_name" gorm:"column:user_name;"`
+	Username        string   `json:"username" gorm:"column:username;"`
 	Salt            string   `json:"-" gorm:"column:salt;"`
 	Role            UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
 	Status          int      `json:"status" gorm:"column:status;default:1;"`
@@ -62,7 +62,7 @@ func (user *UserCreate) BeforeCreate(tx *gorm.DB) error {
 type UserUpdate struct {
 	common.SQLModel `json:",inline"`
 	Password        *string `json:"password" gorm:"column:password;"`
-	UserName        *string `json:"user_name" gorm:"column:user_name;"`
+	Username        *string `json:"username" gorm:"column:username;"`
 	Salt            string  `json:"-" gorm:"column:salt;"`
 	Status          int     `json:"status" gorm:"column:status;default:1;"`
 }
@@ -82,9 +82,9 @@ func (u *UserLogin) TableName() string {
 
 func (data *UserCreate) Validate() error {
 	dataNames := map[string]string{
-		"user_name": data.UserName,
-		"email":     data.Email,
-		"password":  data.Password,
+		"username": data.Username,
+		"email":    data.Email,
+		"password": data.Password,
 	}
 
 	for k, v := range dataNames {

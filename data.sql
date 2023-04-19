@@ -3,7 +3,7 @@ CREATE TABLE users (
   `email`      VARCHAR(50) NOT NULL,
   `password`   VARCHAR(50) NOT NULL,
   `salt`       VARCHAR(50) NULL,
-  `user_name`  VARCHAR(50) NOT NULL,
+  `username`  VARCHAR(50) NOT NULL,
   `role`       ENUM ('user', 'admin') DEFAULT 'user' NOT NULL,
   `status`     TINYINT DEFAULT 1 NOT NULL,
   `createdAt`  TIMESTAMP DEFAULT CURRENT_TIMESTAMP                             NULL,

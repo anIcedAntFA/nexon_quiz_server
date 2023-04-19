@@ -51,7 +51,7 @@ func (biz *loginBusiness) Login(
 
 	simpleUser := common.SimpleUser{
 		SQLModel: user.SQLModel,
-		UserName: user.UserName,
+		Username: user.Username,
 		Role:     user.Role.String(),
 	}
 
@@ -68,7 +68,7 @@ func (biz *loginBusiness) Login(
 	payload := tokenprovider.TokenPayload{
 		UserId:   user.Id,
 		Role:     user.Role.String(),
-		UserName: user.UserName,
+		Username: user.Username,
 	}
 
 	log.Println("payload", payload)
