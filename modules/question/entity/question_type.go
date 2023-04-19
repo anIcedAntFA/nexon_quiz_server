@@ -10,24 +10,28 @@ import (
 type QuestionType int
 
 const (
-	QuestionTypeMultipleChoice QuestionType = iota
+	QuestionTypeMultipleChoice QuestionType = iota + 1
 	QuestionTypeTrueFalse
 )
 
-var allQuestionTypes = [2]string{"Multiple Choice", "True/False"}
-
-func (qt *QuestionType) String() string {
-	return allQuestionTypes[*qt]
+func (qt QuestionType) String() string {
+	switch qt {
+	case QuestionTypeMultipleChoice:
+		return "multiple_choice"
+	default:
+		return "true_false"
+	}
 }
 
 func parseStringToQuestionType(s string) (QuestionType, error) {
-	for i := range allQuestionTypes {
-		if allQuestionTypes[i] == s {
-			return QuestionType(i), nil
-		}
+	switch s {
+	case "multiple_choice":
+		return QuestionTypeMultipleChoice, nil
+	case "true_false":
+		return QuestionTypeTrueFalse, nil
+	default:
+		return QuestionType(1), errors.New("invalid question type string")
 	}
-
-	return QuestionType(0), errors.New("invalid question type string")
 }
 
 // Scan read data from SQL to QuestionType

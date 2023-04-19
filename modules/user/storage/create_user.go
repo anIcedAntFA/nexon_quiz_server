@@ -6,11 +6,11 @@ import (
 	userentity "nexon_quiz/modules/user/entity"
 )
 
-func (s *userMySQLStorage) CreateUser(ctx context.Context, data *userentity.UserCreate) error {
+func (s *userMySQLStorage) CreateUser(ctx context.Context, newUser *userentity.UserCreate) error {
 	//if u implement many action => open transaction & commit
 	db := s.db.Begin()
 
-	if err := db.Table(data.TableName()).Create(data).Error; err != nil {
+	if err := db.Table(newUser.TableName()).Create(newUser).Error; err != nil {
 		//if err, call rollback before, if not, connection will be stuck here
 		//=> too many connection to DB => crash DB
 		db.Rollback()

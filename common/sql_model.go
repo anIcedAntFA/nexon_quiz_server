@@ -8,10 +8,10 @@ import (
 
 type SQLModel struct {
 	Id        uuid.UUID  `json:"id" gorm:"column:id;"`
-	CreatedAt *time.Time `json:"createdAt,omitempty" gorm:"column:createdAt;"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty" gorm:"column:updatedAt;"`
+	CreatedAt *time.Time `json:"created_at,omitempty" gorm:"column:created_at;"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty" gorm:"column:updated_at;"`
 }
 
 type MultipleIDs struct {
-	Ids []uuid.UUID `json:"ids,string" gorm:"-"`
+	Ids []uuid.UUID `json:"ids" gorm:"-"`
 }

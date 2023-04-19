@@ -10,25 +10,33 @@ import (
 type QuestionDifficulty int
 
 const (
-	QuestionDifficultyEasy QuestionDifficulty = iota
+	QuestionDifficultyEasy QuestionDifficulty = iota + 1
 	QuestionDifficultyNormal
 	QuestionDifficultyHard
 )
 
-var allQuestionDifficulties = [2]string{"Multiple Choice", "True/False"}
-
-func (qd *QuestionDifficulty) String() string {
-	return allQuestionDifficulties[*qd]
+func (qt QuestionDifficulty) String() string {
+	switch qt {
+	case QuestionDifficultyEasy:
+		return "easy"
+	case QuestionDifficultyNormal:
+		return "normal"
+	default:
+		return "hard"
+	}
 }
 
 func parseStringToQuestionDifficulty(s string) (QuestionDifficulty, error) {
-	for i := range allQuestionDifficulties {
-		if allQuestionDifficulties[i] == s {
-			return QuestionDifficulty(i), nil
-		}
+	switch s {
+	case "easy":
+		return QuestionDifficultyEasy, nil
+	case "normal":
+		return QuestionDifficultyNormal, nil
+	case "hard":
+		return QuestionDifficultyHard, nil
+	default:
+		return QuestionDifficulty(1), errors.New("invalid question difficulty string")
 	}
-
-	return QuestionDifficulty(0), errors.New("invalid question type string")
 }
 
 // Scan read data from SQL to QuestionType

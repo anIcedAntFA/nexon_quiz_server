@@ -7,6 +7,7 @@ import (
 	"nexon_quiz/middleware"
 	"os"
 
+	answertransport "nexon_quiz/modules/answer/transport"
 	questiontransport "nexon_quiz/modules/question/transport"
 	usertransport "nexon_quiz/modules/user/transport"
 
@@ -54,9 +55,7 @@ func runService(
 	// - Credentials share disabled
 	// - Preflight requests cached for 12 hours
 	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{
-		os.Getenv("DEV_BASE_URL_ROOT"),
-	}
+	config.AllowOrigins = []string{"*"}
 	// To be able to send tokens to the server.
 	// config.AllowAllOrigins = true
 	// OPTIONS method for ReactJS
@@ -83,6 +82,12 @@ func runService(
 		middleware.RequiredAuthorization(appContext),
 		middleware.RequiredRole(appContext, "admin"))
 	question.POST("/new", questiontransport.HandleCreateNewQuestion(appContext))
+
+	answer := v1.Group(
+		"/answer",
+		middleware.RequiredAuthorization(appContext),
+		middleware.RequiredRole(appContext, "admin"))
+	answer.POST("/new", answertransport.HandleCreateNewAnswer(appContext))
 
 	router.Run()
 

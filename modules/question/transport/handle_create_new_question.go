@@ -1,6 +1,7 @@
 package questiontransport
 
 import (
+	"log"
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
@@ -15,13 +16,13 @@ func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var newQuestion questionentity.QuestionCreate
 
-		// requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
 		if err := ctx.ShouldBindJSON(&newQuestion); err != nil {
 			panic(err)
 		}
 
-		// newQuestion.OwnerId = requester.GetUserId()
+		newQuestion.OwnerId = requester.GetUserId()
 
 		db := appCtx.GetMainDBConnection()
 
@@ -32,6 +33,8 @@ func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(newQuestion.Id))
+		log.Println("questionId", newQuestion)
+
+		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(newQuestion.Id))
 	}
 }

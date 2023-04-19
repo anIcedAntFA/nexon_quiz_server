@@ -13,7 +13,7 @@ type RegisterUserStorage interface {
 		moreInfo ...string,
 	) (*userentity.User, error)
 
-	CreateUser(ctx context.Context, data *userentity.UserCreate) error
+	CreateUser(ctx context.Context, newUser *userentity.UserCreate) error
 }
 
 type Hasher interface {
@@ -32,8 +32,8 @@ func NewRegisterUserBusiness(storage RegisterUserStorage, hasher Hasher) *regist
 	}
 }
 
-func (biz *registerUserBusiness) Register(ctx context.Context, data *userentity.UserCreate) error {
-	user, _ := biz.storage.FindUser(ctx, map[string]interface{}{"email": data.Email})
+func (biz *registerUserBusiness) Register(ctx context.Context, newUser *userentity.UserCreate) error {
+	user, _ := biz.storage.FindUser(ctx, map[string]interface{}{"email": newUser.Email})
 
 	if user != nil {
 		if user.Status == 0 {
@@ -45,11 +45,11 @@ func (biz *registerUserBusiness) Register(ctx context.Context, data *userentity.
 
 	salt := common.GenerateSalt(50)
 
-	data.Password = biz.hasher.Hash(data.Password + salt)
-	data.Salt = salt
-	data.Role = userentity.RoleUser
+	newUser.Password = biz.hasher.Hash(newUser.Password + salt)
+	newUser.Salt = salt
+	newUser.Role = userentity.RoleUser
 
-	if err := biz.storage.CreateUser(ctx, data); err != nil {
+	if err := biz.storage.CreateUser(ctx, newUser); err != nil {
 		return common.ErrorCannotCreateEntity(userentity.EntityName, err)
 	}
 

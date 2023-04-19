@@ -11,10 +11,10 @@ import (
 const EntityName = "Answer"
 
 type Answer struct {
-	common.SQLModel `json:",inline"`
-	QuestionId      uuid.UUID `json:"question_id" gorm:"question_id"`
-	Content         string    `json:"content" gorm:"column:content"`
-	Correct         int       `json:"correct" gorm:"column:correct"`
+	common.SQLModel
+	QuestionId uuid.UUID `json:"question_id" gorm:"question_id"`
+	Content    string    `json:"content" gorm:"column:content"`
+	Correct    int       `json:"correct" gorm:"column:correct"`
 }
 
 func (Answer) TableName() string {
@@ -22,10 +22,10 @@ func (Answer) TableName() string {
 }
 
 type AnswerCreate struct {
-	common.SQLModel `json:",inline"`
-	QuestionId      uuid.UUID `json:"question_id" gorm:"question_id"`
-	Content         string    `json:"content" gorm:"column:content"`
-	Correct         int       `json:"correct" gorm:"column:correct"`
+	common.SQLModel
+	QuestionId uuid.UUID `json:"question_id" gorm:"question_id"`
+	Content    string    `json:"content" gorm:"column:content"`
+	Correct    int       `json:"correct" gorm:"column:correct"`
 }
 
 func (*AnswerCreate) TableName() string {
@@ -43,10 +43,10 @@ func (ans *AnswerCreate) Validate() error {
 }
 
 type AnswerUpdate struct {
-	common.SQLModel `json:",inline"`
-	QuestionId      uuid.UUID `json:"question_id" gorm:"question_id"`
-	Content         string    `json:"content" gorm:"column:content"`
-	Correct         int       `json:"correct" gorm:"column:correct"`
+	common.SQLModel
+	QuestionId uuid.UUID `json:"question_id" gorm:"question_id"`
+	Content    string    `json:"content" gorm:"column:content"`
+	Correct    int       `json:"correct" gorm:"column:correct"`
 }
 
 func (*AnswerUpdate) TableName() string {

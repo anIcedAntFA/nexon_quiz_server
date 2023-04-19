@@ -13,13 +13,13 @@ import (
 const EntityName = "User"
 
 type User struct {
-	common.SQLModel `json:",inline"`
-	Email           string   `json:"email" gorm:"column:email;"`
-	Password        string   `json:"-" gorm:"column:password;"`
-	Salt            string   `json:"-" gorm:"column:salt;"`
-	Username        string   `json:"username" gorm:"column:username;"`
-	Role            UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
-	Status          int      `json:"status" gorm:"column:status;default:1;"`
+	common.SQLModel
+	Email    string   `json:"email" gorm:"column:email;"`
+	Password string   `json:"-" gorm:"column:password;"`
+	Salt     string   `json:"-" gorm:"column:salt;"`
+	Username string   `json:"username" gorm:"column:username;"`
+	Role     UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
+	Status   int      `json:"status" gorm:"column:status;default:1;"`
 }
 
 func (User) TableName() string {
@@ -39,13 +39,13 @@ func (u *User) GetRole() string {
 }
 
 type UserCreate struct {
-	common.SQLModel `json:",inline"`
-	Email           string   `json:"email" gorm:"column:email;"`
-	Password        string   `json:"password" gorm:"column:password;"`
-	Username        string   `json:"username" gorm:"column:username;"`
-	Salt            string   `json:"-" gorm:"column:salt;"`
-	Role            UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
-	Status          int      `json:"status" gorm:"column:status;default:1;"`
+	common.SQLModel
+	Email    string   `json:"email" gorm:"column:email;"`
+	Password string   `json:"password" gorm:"column:password;"`
+	Username string   `json:"username" gorm:"column:username;"`
+	Salt     string   `json:"-" gorm:"column:salt;"`
+	Role     UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
+	Status   int      `json:"status" gorm:"column:status;default:1;"`
 }
 
 func (UserCreate) TableName() string {
@@ -60,11 +60,11 @@ func (user *UserCreate) BeforeCreate(tx *gorm.DB) error {
 }
 
 type UserUpdate struct {
-	common.SQLModel `json:",inline"`
-	Password        *string `json:"password" gorm:"column:password;"`
-	Username        *string `json:"username" gorm:"column:username;"`
-	Salt            string  `json:"-" gorm:"column:salt;"`
-	Status          int     `json:"status" gorm:"column:status;default:1;"`
+	common.SQLModel
+	Password *string `json:"password" gorm:"column:password;"`
+	Username *string `json:"username" gorm:"column:username;"`
+	Salt     string  `json:"-" gorm:"column:salt;"`
+	Status   int     `json:"status" gorm:"column:status;default:1;"`
 }
 
 func (UserUpdate) TableName() string {

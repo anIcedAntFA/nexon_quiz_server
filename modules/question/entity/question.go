@@ -12,17 +12,17 @@ import (
 const EntityName = "Question"
 
 type Question struct {
-	common.SQLModel `json:",inline"`
-	OwnerId         uuid.UUID             `json:"-" gorm:"column:owner_id;"`
-	Content         string                `json:"content" gorm:"column:content;"`
-	Category        string                `json:"category" gorm:"column:category;"`
-	Type            QuestionType          `json:"type" gorm:"column:type;"`
-	Difficulty      QuestionDifficulty    `json:"difficulty" gorm:"column:difficulty;"`
-	PlusScore       int                   `json:"plus_score" gorm:"column:plus_score"`
-	MinusScore      int                   `json:"minus_score" gorm:"column:minus_score"`
-	Time            int                   `json:"time" gorm:"column:time"`
-	Status          int                   `json:"status" gorm:"column:status;default:1;"`
-	Answers         *answerentity.Answers `json:"answers" gorm:"preload:false"`
+	common.SQLModel
+	OwnerId    uuid.UUID             `json:"-" gorm:"column:owner_id;"`
+	Content    string                `json:"content" gorm:"column:content;"`
+	Category   string                `json:"category" gorm:"column:category;"`
+	Type       QuestionType          `json:"type" gorm:"column:type;"`
+	Difficulty QuestionDifficulty    `json:"difficulty" gorm:"column:difficulty;"`
+	PlusScore  int                   `json:"plus_score" gorm:"column:plus_score;"`
+	MinusScore int                   `json:"minus_score" gorm:"column:minus_score;"`
+	Time       int                   `json:"time" gorm:"column:time;"`
+	Status     int                   `json:"status" gorm:"column:status;default:1;"`
+	Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 }
 
 func (Question) TableName() string {
@@ -34,15 +34,15 @@ func (q *Question) GetQuestionId() uuid.UUID {
 }
 
 type QuestionCreate struct {
-	common.SQLModel `json:",inline"`
-	OwnerId         uuid.UUID          `json:"-" gorm:"column:owner_id;"`
-	Content         string             `json:"content" gorm:"column:content;"`
-	Category        string             `json:"category" gorm:"column:category;"`
-	Type            QuestionType       `json:"type" gorm:"column:type;"`
-	Difficulty      QuestionDifficulty `json:"difficulty" gorm:"column:difficulty;"`
-	PlusScore       int                `json:"plus_score" gorm:"column:plus_score"`
-	MinusScore      int                `json:"minus_score" gorm:"column:minus_score"`
-	Time            int                `json:"time" gorm:"column:time"`
+	common.SQLModel
+	OwnerId    uuid.UUID          `json:"-" gorm:"column:owner_id;"`
+	Content    string             `json:"content" gorm:"column:content;"`
+	Category   string             `json:"category" gorm:"column:category;"`
+	Type       QuestionType       `json:"type" gorm:"column:type;"`
+	Difficulty QuestionDifficulty `json:"difficulty" gorm:"column:difficulty;"`
+	PlusScore  int                `json:"plus_score" gorm:"column:plus_score;"`
+	MinusScore int                `json:"minus_score" gorm:"column:minus_score;"`
+	Time       int                `json:"time" gorm:"column:time;"`
 }
 
 func (QuestionCreate) TableName() string {
@@ -67,16 +67,15 @@ func (qc *QuestionCreate) Validate() error {
 }
 
 type QuestionUpdate struct {
-	common.SQLModel `json:",inline"`
-	Content         *string               `json:"content" gorm:"column:content;"`
-	Category        *string               `json:"category" gorm:"column:category;"`
-	Type            *QuestionType         `json:"type" gorm:"column:type;"`
-	Difficulty      *QuestionDifficulty   `json:"difficulty" gorm:"column:difficulty;"`
-	PlusScore       *int                  `json:"plus_score" gorm:"column:plus_score"`
-	MinusScore      *int                  `json:"minus_score" gorm:"column:minus_score"`
-	Time            *int                  `json:"time" gorm:"column:time"`
-	Status          *int                  `json:"status" gorm:"column:status;default:1;"`
-	Answers         *answerentity.Answers `json:"answers" gorm:"preload:false"`
+	common.SQLModel
+	Content    *string             `json:"content" gorm:"column:content;"`
+	Category   *string             `json:"category" gorm:"column:category;"`
+	Type       *QuestionType       `json:"type" gorm:"column:type;"`
+	Difficulty *QuestionDifficulty `json:"difficulty" gorm:"column:difficulty;"`
+	PlusScore  *int                `json:"plus_score" gorm:"column:plus_score;"`
+	MinusScore *int                `json:"minus_score" gorm:"column:minus_score;"`
+	Time       *int                `json:"time" gorm:"column:time;"`
+	Status     *int                `json:"status" gorm:"column:status;default:1;"`
 }
 
 func (QuestionUpdate) TableName() string {

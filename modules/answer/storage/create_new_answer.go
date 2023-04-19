@@ -6,8 +6,11 @@ import (
 	answerentity "nexon_quiz/modules/answer/entity"
 )
 
-func (s *answerMySQLStorage) CreateAnswer(ctx context.Context, data *answerentity.AnswerCreate) error {
-	if err := s.db.Create(&data).Error; err != nil {
+func (s *answerMySQLStorage) CreateAnswer(
+	ctx context.Context,
+	newAnswer *answerentity.AnswerCreate,
+) error {
+	if err := s.db.Create(&newAnswer).Error; err != nil {
 		return common.ErrorDB(err)
 	}
 
