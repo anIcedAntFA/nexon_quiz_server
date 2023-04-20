@@ -38,6 +38,13 @@ func (u *User) GetRole() string {
 	return u.Role.String()
 }
 
+func (user *UserCreate) BeforeCreate(tx *gorm.DB) error {
+	id, err := uuid.NewRandom()
+	user.Id = uuid.UUID(id)
+
+	return err
+}
+
 type UserCreate struct {
 	common.SQLModel
 	Email     string   `json:"email" gorm:"column:email;"`
@@ -50,13 +57,6 @@ type UserCreate struct {
 
 func (UserCreate) TableName() string {
 	return User{}.TableName()
-}
-
-func (user *UserCreate) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewRandom()
-	user.Id = uuid.UUID(id)
-
-	return err
 }
 
 type UserUpdate struct {

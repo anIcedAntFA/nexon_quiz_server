@@ -40,7 +40,7 @@ func HandleLoginUser(appCtx appctx.AppContext) gin.HandlerFunc {
 		ctx.JSON(http.StatusOK, gin.H{
 			"status_code": http.StatusOK,
 			"message":     "Login successfully",
-			"result": gin.H{
+			"data": gin.H{
 				"user":        simpleUser,
 				"accessToken": account.Token,
 			},

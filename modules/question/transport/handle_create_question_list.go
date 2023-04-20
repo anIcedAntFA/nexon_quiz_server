@@ -1,7 +1,6 @@
 package questiontransport
 
 import (
-	"log"
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
@@ -12,33 +11,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var newQuestion questionentity.QuestionCreate
+		var newQuestion []questionentity.QuestionCreate
 
-		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		// requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
 		if err := ctx.ShouldBindJSON(&newQuestion); err != nil {
 			panic(err)
 		}
 
-		newQuestion.OwnerId = requester.GetUserId()
-
-		log.Println("newQuestion", newQuestion)
+		// newQuestion.OwnerId = requester.GetUserId()
 
 		db := appCtx.GetMainDBConnection()
 
 		questionStorage := questionstorage.NewQuestionMySQLStorage(db)
-		business := questionbusiness.NewCreateQuestionBusiness(questionStorage)
+		business := questionbusiness.NewCreateQuestionListBusiness(questionStorage)
 
-		if err := business.CreateQuestion(ctx.Request.Context(), &newQuestion); err != nil {
+		if err := business.CreateQuestionList(ctx.Request.Context(), newQuestion); err != nil {
 			panic(err)
 		}
 
 		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(
 			http.StatusCreated,
 			"Create new question successfully",
-			newQuestion.Id,
+			true,
 		))
 	}
 }

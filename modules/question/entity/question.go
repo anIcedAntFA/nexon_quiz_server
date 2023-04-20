@@ -35,7 +35,6 @@ func (q *Question) GetQuestionId() uuid.UUID {
 }
 
 type QuestionPagingResult struct {
-	// Data         []Question `json:"data"`
 	PreviousPage int `json:"previous_page"`
 	CurrentPage  int `json:"current_page"`
 	NextPage     int `json:"next_page"`
@@ -48,34 +47,38 @@ func (QuestionPagingResult) TableName() string {
 	return Question{}.TableName()
 }
 
-type QuestionCreate struct {
-	common.SQLModel
-	OwnerId    uuid.UUID          `json:"-" gorm:"column:owner_id;"`
-	Content    string             `json:"content" gorm:"column:content;"`
-	Category   string             `json:"category" gorm:"column:category;"`
-	Type       QuestionType       `json:"type" gorm:"column:type;"`
-	Difficulty QuestionDifficulty `json:"difficulty" gorm:"column:difficulty;"`
-	PlusScore  int                `json:"plus_score" gorm:"column:plus_score;"`
-	MinusScore int                `json:"minus_score" gorm:"column:minus_score;"`
-	Time       int                `json:"time" gorm:"column:time;"`
-	IsDeleted  int                `json:"is_deleted" gorm:"column:is_deleted;"`
-	// Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
-}
-
-func (QuestionCreate) TableName() string {
-	return Question{}.TableName()
-}
-
 func (qc *QuestionCreate) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewRandom()
+	id, err := uuid.NewUUID()
 	qc.Id = uuid.UUID(id)
+
+	for _, v := range *qc.Answers {
+		v.QuestionId = qc.Id
+
+		id, err := uuid.NewRandom()
+		v.Id = uuid.UUID(id)
+
+		return err
+	}
 
 	return err
 }
 
-type QuestionAnswersCreate struct {
-	QuestionCreate
-	Answers *answerentity.Answers `json:"answers" gorm:"preload:false;"`
+type QuestionCreate struct {
+	common.SQLModel
+	OwnerId    uuid.UUID                   `json:"-" gorm:"column:owner_id;"`
+	Content    string                      `json:"content" gorm:"column:content;"`
+	Category   string                      `json:"category" gorm:"column:category;"`
+	Type       QuestionType                `json:"type" gorm:"column:type;"`
+	Difficulty QuestionDifficulty          `json:"difficulty" gorm:"column:difficulty;"`
+	PlusScore  int                         `json:"plus_score" gorm:"column:plus_score;"`
+	MinusScore int                         `json:"minus_score" gorm:"column:minus_score;"`
+	Time       int                         `json:"time" gorm:"column:time;"`
+	IsDeleted  int                         `json:"is_deleted" gorm:"column:is_deleted;"`
+	Answers    *answerentity.AnswersCreate `json:"answers" gorm:"foreignKey:QuestionId"`
+}
+
+func (QuestionCreate) TableName() string {
+	return Question{}.TableName()
 }
 
 func (qc *QuestionCreate) Validate() error {

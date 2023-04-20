@@ -8,7 +8,7 @@ import (
 type successResponse struct {
 	StatusCode int         `json:"status_code"`
 	Message    string      `json:"message"`
-	Result     interface{} `json:"result"`
+	Data       interface{} `json:"data"`
 }
 
 type pagingSuccessResponse struct {
@@ -18,11 +18,11 @@ type pagingSuccessResponse struct {
 	Pagination interface{} `json:"metadata,omitempty"`
 }
 
-func NewSuccessResponse(statusCode int, message string, result interface{}) *successResponse {
+func NewSuccessResponse(statusCode int, message string, data interface{}) *successResponse {
 	return &successResponse{
 		StatusCode: statusCode,
 		Message:    message,
-		Result:     result,
+		Data:       data,
 	}
 }
 
@@ -35,8 +35,8 @@ func NewPagingSuccessResponse(statusCode int, message string, data interface{}, 
 	}
 }
 
-func SimpleSuccessResponse(statusCode int, message string, result interface{}) *successResponse {
-	return NewSuccessResponse(statusCode, message, result)
+func SimpleSuccessResponse(statusCode int, message string, data interface{}) *successResponse {
+	return NewSuccessResponse(statusCode, message, data)
 }
 
 type AppError struct {

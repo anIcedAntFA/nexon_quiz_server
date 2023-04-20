@@ -6,9 +6,9 @@ import (
 	questionentity "nexon_quiz/modules/question/entity"
 )
 
-func (s *questionMySQLStorage) CreateQuestion(
+func (s *questionMySQLStorage) CreateQuestionList(
 	ctx context.Context,
-	newQuestion *questionentity.QuestionCreate,
+	newQuestion []questionentity.QuestionCreate,
 ) error {
 	db := s.db
 

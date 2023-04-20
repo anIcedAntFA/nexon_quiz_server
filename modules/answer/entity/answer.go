@@ -23,6 +23,13 @@ func (Answer) TableName() string {
 	return "answers"
 }
 
+func (ac *AnswerCreate) BeforeCreate(tx *gorm.DB) error {
+	id, err := uuid.NewRandom()
+	ac.Id = uuid.UUID(id)
+
+	return err
+}
+
 type AnswerCreate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
@@ -33,13 +40,6 @@ type AnswerCreate struct {
 
 func (AnswerCreate) TableName() string {
 	return Answer{}.TableName()
-}
-
-func (ac *AnswerCreate) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewRandom()
-	ac.Id = uuid.UUID(id)
-
-	return err
 }
 
 type AnswersCreate = []AnswerCreate

@@ -81,16 +81,24 @@ func runService(
 		"/question",
 		middleware.RequiredAuthorization(appContext),
 	)
-	question.POST("/new", middleware.RequiredRole(appContext, "admin"), questiontransport.HandleCreateNewQuestion(appContext))
-	// question.POST("/news", questiontransport.HandleCreateQuestionAnswers(appContext))
+	question.POST(
+		"/new",
+		middleware.RequiredRole(appContext, "admin"),
+		questiontransport.HandleCreateNewQuestion(appContext),
+	)
+	question.POST(
+		"/new-list",
+		middleware.RequiredRole(appContext, "admin"),
+		questiontransport.HandleCreateQuestionList(appContext),
+	)
 	question.GET("/:id", questiontransport.HandleGetQuestion(appContext))
 	question.GET("/list", questiontransport.HandleGetQuestionList(appContext))
 
 	answer := v1.Group(
 		"/answer",
 		middleware.RequiredAuthorization(appContext),
-		middleware.RequiredRole(appContext, "admin"))
-	answer.POST("/new", answertransport.HandleCreateNewAnswer(appContext))
+	)
+	answer.POST("/new", middleware.RequiredRole(appContext, "admin"), answertransport.HandleCreateNewAnswer(appContext))
 	answer.POST("/new-list", answertransport.HandleCreateAnswerList(appContext))
 
 	router.Run()
