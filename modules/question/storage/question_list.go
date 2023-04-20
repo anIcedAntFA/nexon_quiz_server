@@ -9,30 +9,31 @@ import (
 
 func (s *questionMySQLStorage) QuestionList(
 	ctx context.Context,
-	// filter *todomodel.Filter,
+	filter *questionentity.Filter,
 	queryParams *common.QueryParams,
 	moreKeys ...string,
 ) ([]questionentity.Question, error) {
 	//requester := ctxs.MustGet(common.CurrentUser).(common.Requester)
 	db := s.db.Table(questionentity.Question{}.TableName())
 
-	// if f := filter; f != nil {
-	// 	if len(f.Status) > 0 {
-	// 		db = db.Where("status in (?)", f.Status)
-	// 	}
-	// 	if len(f.Type) > 0 {
-	// 		db = db.Where("type in (?)", f.Type)
-	// 	}
-	// 	if len(f.Category) > 0 {
-	// 		db = db.Where("category in (?)", f.Category)
-	// 	}
-	// 	if len(f.Level) > 0 {
-	// 		db = db.Where("level in (?)", f.Level)
-	// 	}
-	// 	if f.Score > 0 {
-	// 		db = db.Where("level in (?)", f.Score)
-	// 	}
-	// }
+	if f := filter; f != nil {
+
+		if f.Category != "" {
+			db = db.Where("type = ?", f.Category)
+		}
+
+		if len(f.Type) > 0 {
+			db = db.Where("difficulty in (?)", f.Type)
+		}
+
+		if f.Difficulty > 0 {
+			db = db.Where("difficulty = ?", f.Difficulty)
+		}
+
+		// if f.Score > 0 {
+		// 	db = db.Where("level in (?)", f.Score)
+		// }
+	}
 
 	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
 		return nil, common.ErrorDB(err)
@@ -51,7 +52,7 @@ func (s *questionMySQLStorage) QuestionList(
 		searchStr := fmt.Sprintf("%%%s%%", qp.Search)
 
 		if len(qp.Search) > 0 {
-			db = db.Where("content LIKE ?", searchStr)
+			db = db.Where("content LIKE ? OR category LIKE ?", searchStr, searchStr)
 		}
 
 		offset = (queryParams.CurrentPage - 1) * queryParams.PageSize

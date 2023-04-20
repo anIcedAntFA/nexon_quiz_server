@@ -5,6 +5,7 @@ import (
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
 	questionbusiness "nexon_quiz/modules/question/business"
+	questionentity "nexon_quiz/modules/question/entity"
 	questionstorage "nexon_quiz/modules/question/storage"
 
 	"github.com/gin-gonic/gin"
@@ -20,11 +21,11 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		queryParams.Fulfill()
 
-		// var filter questionentity.Filter
+		var filter questionentity.Filter
 
-		// if err := ctx.ShouldBind(&filter); err != nil {
-		// 	panic(common.ErrorInvalidRequest(err))
-		// }
+		if err := ctx.ShouldBindQuery(&filter); err != nil {
+			panic(common.ErrorInvalidRequest(err))
+		}
 
 		db := appCtx.GetMainDBConnection()
 
@@ -34,7 +35,7 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		business := questionbusiness.NewQuestionListBusiness(storage, requester)
 
-		data, pagination, err := business.QuestionList(ctx.Request.Context(), &queryParams)
+		data, pagination, err := business.QuestionList(ctx.Request.Context(), &filter, &queryParams)
 
 		if err != nil {
 			panic(err)

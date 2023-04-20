@@ -10,7 +10,7 @@ import (
 type QuestionListStorage interface {
 	QuestionList(
 		ctx context.Context,
-		// filter *questionentity.Filter,
+		filter *questionentity.Filter,
 		queryParams *common.QueryParams,
 		moreKeys ...string,
 	) ([]questionentity.Question, error)
@@ -30,13 +30,12 @@ func NewQuestionListBusiness(storage QuestionListStorage, requester common.Reque
 
 func (biz *questionListBusiness) QuestionList(
 	ctx context.Context,
-	// filter *questionentity.Filter,
-
+	filter *questionentity.Filter,
 	queryParams *common.QueryParams,
 ) ([]questionentity.Question, *questionentity.QuestionPagingResult, error) {
 	ctxStore := context.WithValue(ctx, common.CurrentUser, biz.requester)
 
-	questions, err := biz.storage.QuestionList(ctxStore, queryParams)
+	questions, err := biz.storage.QuestionList(ctxStore, filter, queryParams)
 
 	var pagingResult questionentity.QuestionPagingResult
 
