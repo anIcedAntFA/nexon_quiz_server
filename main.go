@@ -80,10 +80,11 @@ func runService(
 	question := v1.Group(
 		"/question",
 		middleware.RequiredAuthorization(appContext),
-		middleware.RequiredRole(appContext, "admin"))
-	question.POST("/new", questiontransport.HandleCreateNewQuestion(appContext))
-	question.POST("/news", questiontransport.HandleCreateQuestionAnswers(appContext))
+	)
+	question.POST("/new", middleware.RequiredRole(appContext, "admin"), questiontransport.HandleCreateNewQuestion(appContext))
+	// question.POST("/news", questiontransport.HandleCreateQuestionAnswers(appContext))
 	question.GET("/:id", questiontransport.HandleGetQuestion(appContext))
+	question.GET("/list", questiontransport.HandleGetQuestionList(appContext))
 
 	answer := v1.Group(
 		"/answer",

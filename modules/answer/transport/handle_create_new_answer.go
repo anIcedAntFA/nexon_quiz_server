@@ -37,6 +37,10 @@ func HandleCreateNewAnswer(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(newAnswer.Id))
+		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(
+			http.StatusOK,
+			"Create new answer successfully",
+			newAnswer.Id,
+		))
 	}
 }

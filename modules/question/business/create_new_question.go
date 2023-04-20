@@ -7,15 +7,26 @@ import (
 )
 
 type CreateQuestionStorage interface {
-	CreateQuestion(ctx context.Context, newQuestion *questionentity.QuestionCreate) error
+	CreateQuestion(ctx context.Context, newQuestion *questionentity.QuestionCreate, moreKeys ...string) error
 }
+
+// type CreateAnswersStorage interface {
+// 	CreateAnswerList(
+// 		ctx context.Context,
+// 		newAnswers answerentity.AnswersCreate,
+// 	) error
+// }
 
 type createQuestionBusiness struct {
-	storage CreateQuestionStorage
+	questionStorage CreateQuestionStorage
+	// answersStorage  CreateAnswersStorage
 }
 
-func NewCreateQuestionBusiness(storage CreateQuestionStorage) *createQuestionBusiness {
-	return &createQuestionBusiness{storage: storage}
+func NewCreateQuestionBusiness(questionStorage CreateQuestionStorage) *createQuestionBusiness {
+	return &createQuestionBusiness{
+		questionStorage: questionStorage,
+		// answersStorage:  answersStorage,
+	}
 }
 
 func (biz *createQuestionBusiness) CreateQuestion(
@@ -26,9 +37,17 @@ func (biz *createQuestionBusiness) CreateQuestion(
 		return common.ErrorInvalidRequest(err)
 	}
 
-	if err := biz.storage.CreateQuestion(ctx, newQuestion); err != nil {
+	if err := biz.questionStorage.CreateQuestion(ctx, newQuestion, "Answers"); err != nil {
 		return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
 	}
+
+	// for _, v := range newAnswers {
+	// 	v.QuestionId = newQuestion.Id
+	// }
+
+	// if err := biz.answersStorage.CreateAnswerList(ctx, newAnswers); err != nil {
+	// 	return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
+	// }
 
 	return nil
 }

@@ -32,6 +32,10 @@ func HandleRegisterUser(appCtx appctx.AppContext) func(*gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(newUser.Id))
+		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(
+			http.StatusCreated,
+			"Register Successfully",
+			newUser.Id,
+		))
 	}
 }

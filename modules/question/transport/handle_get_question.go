@@ -33,6 +33,10 @@ func HandleGetQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(question))
+		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(
+			http.StatusOK,
+			"Get question successfully",
+			question,
+		))
 	}
 }

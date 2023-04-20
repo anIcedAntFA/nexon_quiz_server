@@ -31,12 +31,17 @@ func HandleCreateAnswerList(appCtx appctx.AppContext) gin.HandlerFunc {
 		db := appCtx.GetMainDBConnection()
 
 		storage := answerstorage.NewAnswerMySQLStorage(db)
+
 		business := answerbusiness.NewCreateAnswerListBusiness(storage)
 
 		if err := business.CreateAnswerList(ctx, newAnswers); err != nil {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(true))
+		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(
+			http.StatusOK,
+			"Create answer list successfully",
+			true,
+		))
 	}
 }

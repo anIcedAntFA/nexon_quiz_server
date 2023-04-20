@@ -22,8 +22,8 @@ type Question struct {
 	PlusScore  int                   `json:"plus_score" gorm:"column:plus_score;"`
 	MinusScore int                   `json:"minus_score" gorm:"column:minus_score;"`
 	Time       int                   `json:"time" gorm:"column:time;"`
-	Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 	IsDeleted  int                   `json:"-" gorm:"column:is_deleted;"`
+	Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 }
 
 func (Question) TableName() string {
@@ -32,6 +32,20 @@ func (Question) TableName() string {
 
 func (q *Question) GetQuestionId() uuid.UUID {
 	return q.Id
+}
+
+type QuestionPagingResult struct {
+	// Data         []Question `json:"data"`
+	PreviousPage int `json:"previous_page"`
+	CurrentPage  int `json:"current_page"`
+	NextPage     int `json:"next_page"`
+	PageSize     int `json:"page_size"`
+	TotalItems   int `json:"total_items"`
+	TotalPages   int `json:"total_pages"`
+}
+
+func (QuestionPagingResult) TableName() string {
+	return Question{}.TableName()
 }
 
 type QuestionCreate struct {
@@ -45,6 +59,7 @@ type QuestionCreate struct {
 	MinusScore int                `json:"minus_score" gorm:"column:minus_score;"`
 	Time       int                `json:"time" gorm:"column:time;"`
 	IsDeleted  int                `json:"is_deleted" gorm:"column:is_deleted;"`
+	// Answers    *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 }
 
 func (QuestionCreate) TableName() string {
@@ -56,6 +71,11 @@ func (qc *QuestionCreate) BeforeCreate(tx *gorm.DB) error {
 	qc.Id = uuid.UUID(id)
 
 	return err
+}
+
+type QuestionAnswersCreate struct {
+	QuestionCreate
+	Answers *answerentity.Answers `json:"answers" gorm:"preload:false;"`
 }
 
 func (qc *QuestionCreate) Validate() error {

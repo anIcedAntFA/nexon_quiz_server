@@ -49,6 +49,10 @@ func (biz *createQuestionAnswersRepository) CreateQuestionAnswers(
 		return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
 	}
 
+	for _, v := range newAnswers {
+		v.QuestionId = newQuestion.Id
+	}
+
 	if err := biz.answersStorage.CreateAnswerList(ctx, newAnswers); err != nil {
 		return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
 	}

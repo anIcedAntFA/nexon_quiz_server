@@ -6,15 +6,37 @@ import (
 )
 
 type successResponse struct {
-	Result interface{} `json:"result"`
+	StatusCode int         `json:"status_code"`
+	Message    string      `json:"message"`
+	Result     interface{} `json:"result"`
 }
 
-func NewSuccessResponse(result interface{}) *successResponse {
-	return &successResponse{Result: result}
+type pagingSuccessResponse struct {
+	StatusCode int         `json:"status_code"`
+	Message    string      `json:"message"`
+	Data       interface{} `json:"data"`
+	Pagination interface{} `json:"metadata,omitempty"`
 }
 
-func SimpleSuccessResponse(result interface{}) *successResponse {
-	return NewSuccessResponse(result)
+func NewSuccessResponse(statusCode int, message string, result interface{}) *successResponse {
+	return &successResponse{
+		StatusCode: statusCode,
+		Message:    message,
+		Result:     result,
+	}
+}
+
+func NewPagingSuccessResponse(statusCode int, message string, data interface{}, pagination interface{}) *pagingSuccessResponse {
+	return &pagingSuccessResponse{
+		StatusCode: statusCode,
+		Message:    message,
+		Data:       data,
+		Pagination: pagination,
+	}
+}
+
+func SimpleSuccessResponse(statusCode int, message string, result interface{}) *successResponse {
+	return NewSuccessResponse(statusCode, message, result)
 }
 
 type AppError struct {

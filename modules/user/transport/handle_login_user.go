@@ -22,9 +22,13 @@ func HandleLoginUser(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		db := appCtx.GetMainDBConnection()
+
 		tokenProvider := jwt.NewTokenJWTProvider(appCtx.SecretKey())
+
 		storage := userstorage.NewUserMySQLStorage(db)
+
 		md5 := hasher.NewMd5Hash()
+
 		business := userbusiness.NewLoginBusiness(storage, tokenProvider, md5, 60*60*24*7) //7 days
 
 		simpleUser, account, err := business.Login(ctx.Request.Context(), &data)
@@ -34,6 +38,8 @@ func HandleLoginUser(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{
+			"status_code": http.StatusOK,
+			"message":     "Login successfully",
 			"result": gin.H{
 				"user":        simpleUser,
 				"accessToken": account.Token,
