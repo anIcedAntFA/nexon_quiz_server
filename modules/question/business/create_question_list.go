@@ -31,9 +31,11 @@ func (biz *createQuestionListBusiness) CreateQuestionList(
 	ctx context.Context,
 	newQuestion []questionentity.QuestionCreate,
 ) error {
-	// if err := newQuestion.Validate(); err != nil {
-	// 	return common.ErrorInvalidRequest(err)
-	// }
+	for _, v := range newQuestion {
+		if err := v.Validate(); err != nil {
+			return common.ErrorInvalidRequest(err)
+		}
+	}
 
 	for _, questionValue := range newQuestion {
 		id, _ := uuid.NewUUID()

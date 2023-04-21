@@ -78,7 +78,7 @@ func runService(
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
 
 	questions := v1.Group(
-		"/question",
+		"/questions",
 		middleware.RequiredAuthorization(appContext),
 	)
 	questions.POST(
@@ -87,19 +87,19 @@ func runService(
 		questiontransport.HandleCreateNewQuestion(appContext),
 	)
 	questions.POST(
-		"/new-list",
+		"/",
 		middleware.RequiredRole(appContext, "admin"),
 		questiontransport.HandleCreateQuestionList(appContext),
 	)
+	questions.GET("", questiontransport.HandleGetQuestionList(appContext))
 	questions.GET("/:id", questiontransport.HandleGetQuestion(appContext))
-	questions.GET("/list", questiontransport.HandleGetQuestionList(appContext))
 
-	answer := v1.Group(
-		"/answer",
+	answers := v1.Group(
+		"/answers",
 		middleware.RequiredAuthorization(appContext),
 	)
-	answer.POST("/new", middleware.RequiredRole(appContext, "admin"), answertransport.HandleCreateNewAnswer(appContext))
-	answer.POST("/new-list", answertransport.HandleCreateAnswerList(appContext))
+	answers.POST("/new", middleware.RequiredRole(appContext, "admin"), answertransport.HandleCreateNewAnswer(appContext))
+	answers.POST("/new-list", answertransport.HandleCreateAnswerList(appContext))
 
 	router.Run()
 

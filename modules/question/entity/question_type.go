@@ -10,12 +10,15 @@ import (
 type QuestionType int
 
 const (
-	QuestionTypeMultipleChoice QuestionType = iota + 1
+	QuestionTypeSingleChoice QuestionType = iota + 1
+	QuestionTypeMultipleChoice
 	QuestionTypeTrueFalse
 )
 
 func (qt QuestionType) String() string {
 	switch qt {
+	case QuestionTypeSingleChoice:
+		return "single_choice"
 	case QuestionTypeMultipleChoice:
 		return "multiple_choice"
 	default:
@@ -25,6 +28,8 @@ func (qt QuestionType) String() string {
 
 func parseStringToQuestionType(s string) (QuestionType, error) {
 	switch s {
+	case "single_choice":
+		return QuestionTypeSingleChoice, nil
 	case "multiple_choice":
 		return QuestionTypeMultipleChoice, nil
 	case "true_false":
