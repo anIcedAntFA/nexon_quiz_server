@@ -77,22 +77,22 @@ func runService(
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
 
-	question := v1.Group(
+	questions := v1.Group(
 		"/question",
 		middleware.RequiredAuthorization(appContext),
 	)
-	question.POST(
+	questions.POST(
 		"/new",
 		middleware.RequiredRole(appContext, "admin"),
 		questiontransport.HandleCreateNewQuestion(appContext),
 	)
-	question.POST(
+	questions.POST(
 		"/new-list",
 		middleware.RequiredRole(appContext, "admin"),
 		questiontransport.HandleCreateQuestionList(appContext),
 	)
-	question.GET("/:id", questiontransport.HandleGetQuestion(appContext))
-	question.GET("/list", questiontransport.HandleGetQuestionList(appContext))
+	questions.GET("/:id", questiontransport.HandleGetQuestion(appContext))
+	questions.GET("/list", questiontransport.HandleGetQuestionList(appContext))
 
 	answer := v1.Group(
 		"/answer",
