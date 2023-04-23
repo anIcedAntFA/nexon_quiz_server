@@ -1,6 +1,7 @@
 package questiontransport
 
 import (
+	"log"
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
@@ -32,6 +33,7 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 		storage := questionstorage.NewQuestionMySQLStorage(db)
 
 		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		log.Println("user role", requester.GetRole())
 
 		business := questionbusiness.NewQuestionListBusiness(storage, requester)
 
@@ -41,7 +43,7 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusOK, common.NewPagingSuccessResponse(
+		ctx.JSON(http.StatusOK, common.NewSuccessResponse(
 			http.StatusOK,
 			"Get question list successfully",
 			data,

@@ -2,9 +2,11 @@ package questionbusiness
 
 import (
 	"context"
+	"log"
 	"math"
 	"nexon_quiz/common"
 	questionentity "nexon_quiz/modules/question/entity"
+	userentity "nexon_quiz/modules/user/entity"
 )
 
 type QuestionListStorage interface {
@@ -21,7 +23,10 @@ type questionListBusiness struct {
 	requester common.Requester
 }
 
-func NewQuestionListBusiness(storage QuestionListStorage, requester common.Requester) *questionListBusiness {
+func NewQuestionListBusiness(
+	storage QuestionListStorage,
+	requester common.Requester,
+) *questionListBusiness {
 	return &questionListBusiness{
 		storage:   storage,
 		requester: requester,
@@ -36,6 +41,15 @@ func (biz *questionListBusiness) QuestionList(
 	ctxStore := context.WithValue(ctx, common.CurrentUser, biz.requester)
 
 	questions, err := biz.storage.QuestionList(ctxStore, filter, queryParams)
+
+	if biz.requester.GetRole() == userentity.RoleUser.String() {
+		for _, question := range questions {
+			for _, answer := range *question.Answers {
+				answer.Correct = 0
+				log.Println("answer", answer)
+			}
+		}
+	}
 
 	var pagingResult questionentity.QuestionPagingResult
 

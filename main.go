@@ -10,6 +10,7 @@ import (
 	answertransport "nexon_quiz/modules/answer/transport"
 	questiontransport "nexon_quiz/modules/question/transport"
 	usertransport "nexon_quiz/modules/user/transport"
+	userroletransport "nexon_quiz/modules/userrole/transport"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -72,6 +73,9 @@ func runService(
 			"message": "hello 500 ae",
 		})
 	})
+
+	role := v1.Group("/roles")
+	role.POST("/new", userroletransport.HandleCreateNewUserRole(appContext))
 
 	auth := v1.Group("/auth")
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))

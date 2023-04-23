@@ -17,7 +17,7 @@ CREATE TABLE questions (
   `owner_id` CHAR(36) NOT NULL,
 	`content` VARCHAR(250) CHARACTER SET utf8mb4 NOT NULL,
 	`category` CHAR(36) CHARACTER SET utf8mb4 NOT NULL,
-	`type` ENUM ("single_choice", "multiple_choice", "true_false") DEFAULT 'single_choice',
+	`type` ENUM ('single_choice', 'multiple_choice', 'true_false') DEFAULT 'single_choice',
 	`difficulty` ENUM ('easy', 'normal', 'hard') DEFAULT 'normal',
 	`plus_score` INT NOT NULL,
   `minus_score` INT NOT NULL,

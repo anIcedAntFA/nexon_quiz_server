@@ -15,7 +15,7 @@ type Answer struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"-" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    bool      `json:"correct" gorm:"column:correct"`
+	Correct    int       `json:"correct" gorm:"column:correct"`
 	IsDeleted  bool      `json:"-" gorm:"column:is_deleted;"`
 }
 
@@ -34,7 +34,7 @@ type AnswerCreate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    bool      `json:"correct" gorm:"column:correct"`
+	Correct    int       `json:"correct" gorm:"column:correct"`
 	IsDeleted  bool      `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
@@ -58,7 +58,7 @@ type AnswerUpdate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    bool      `json:"correct" gorm:"column:correct"`
+	Correct    int       `json:"correct" gorm:"column:correct"`
 	IsDeleted  bool      `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 

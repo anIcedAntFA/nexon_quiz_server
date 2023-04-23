@@ -13,11 +13,15 @@ func (s *questionMySQLStorage) QuestionList(
 	queryParams *common.QueryParams,
 	moreKeys ...string,
 ) ([]questionentity.Question, error) {
-	//requester := ctxs.MustGet(common.CurrentUser).(common.Requester)
+	// requester := ctx.Value(common.CurrentUser).(common.Requester)
+
 	db := s.db.Table(questionentity.Question{}.TableName())
 
-	if f := filter; f != nil {
+	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
+		return nil, common.ErrorDB(err)
+	}
 
+	if f := filter; f != nil {
 		if f.Category != "" {
 			db = db.Where("type = ?", f.Category)
 		}
@@ -33,10 +37,6 @@ func (s *questionMySQLStorage) QuestionList(
 		// if f.Score > 0 {
 		// 	db = db.Where("level in (?)", f.Score)
 		// }
-	}
-
-	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
-		return nil, common.ErrorDB(err)
 	}
 
 	db = db.

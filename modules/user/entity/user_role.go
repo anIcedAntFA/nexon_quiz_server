@@ -8,7 +8,7 @@ import (
 type UserRole int
 
 const (
-	RoleAdmin UserRole = iota
+	RoleAdmin UserRole = iota + 1
 	RoleUser
 )
 

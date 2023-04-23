@@ -35,7 +35,7 @@ func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.JSON(http.StatusCreated, common.NewSuccessResponse(
+		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(
 			http.StatusCreated,
 			"Create new question successfully",
 			true,
