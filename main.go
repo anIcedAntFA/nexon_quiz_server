@@ -10,6 +10,7 @@ import (
 	answertransport "nexon_quiz/modules/answer/transport"
 	categorytransport "nexon_quiz/modules/category/transport"
 	questiontransport "nexon_quiz/modules/question/transport"
+	typetransport "nexon_quiz/modules/type/transport"
 	usertransport "nexon_quiz/modules/user/transport"
 	userroletransport "nexon_quiz/modules/userrole/transport"
 
@@ -82,6 +83,12 @@ func runService(
 	auth := v1.Group("/auth")
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
+
+	types := v1.Group("/categories")
+	// types.POST("/new", categorytransport.HandleCreateNewCategory(appContext))
+	// types.POST("/", categorytransport.HandleCreateQuestionList(appContext))
+	// types.GET("/:id", categorytransport.HandleGetCategory(appContext))
+	types.GET("/", typetransport.HandleGetTypeList(appContext))
 
 	category := v1.Group("/categories")
 	category.POST("/new", categorytransport.HandleCreateNewCategory(appContext))

@@ -12,6 +12,12 @@ type CreateCategoryStorage interface {
 		ctx context.Context,
 		category *categoryentity.CategoryCreate,
 	) error
+
+	FindCategory(
+		ctx context.Context,
+		condition map[string]interface{},
+		moreKeys ...string,
+	) (*categoryentity.Category, error)
 }
 
 type createCategoryBusiness struct {
@@ -28,6 +34,8 @@ func (biz *createCategoryBusiness) CreateNewCategory(
 	ctx context.Context,
 	newCategory *categoryentity.CategoryCreate,
 ) error {
+	// currentCategory, err := biz.storage.FindCategory(ctx, map[string]interface{}{"content": })
+
 	if err := newCategory.Validate(); err != nil {
 		return common.NewCustomError(
 			err,
