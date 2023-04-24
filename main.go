@@ -8,6 +8,7 @@ import (
 	"os"
 
 	answertransport "nexon_quiz/modules/answer/transport"
+	categorytransport "nexon_quiz/modules/category/transport"
 	questiontransport "nexon_quiz/modules/question/transport"
 	usertransport "nexon_quiz/modules/user/transport"
 	userroletransport "nexon_quiz/modules/userrole/transport"
@@ -76,23 +77,30 @@ func runService(
 
 	role := v1.Group("/roles")
 	role.POST("/new", userroletransport.HandleCreateNewUserRole(appContext))
+	role.GET("/:id", userroletransport.HandleGetUserRole(appContext))
 
 	auth := v1.Group("/auth")
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
 
+	category := v1.Group("/categories")
+	category.POST("/new", categorytransport.HandleCreateNewCategory(appContext))
+	category.POST("/", categorytransport.HandleCreateQuestionList(appContext))
+	category.GET("/:id", categorytransport.HandleGetCategory(appContext))
+	category.GET("/", categorytransport.HandleGetQuestionList(appContext))
+
 	questions := v1.Group(
 		"/questions",
-		middleware.RequiredAuthorization(appContext),
+		// middleware.RequiredAuthorization(appContext),
 	)
 	questions.POST(
 		"/new",
-		middleware.RequiredRole(appContext, "admin"),
+		// middleware.RequiredRole(appContext, "admin"),
 		questiontransport.HandleCreateNewQuestion(appContext),
 	)
 	questions.POST(
 		"/",
-		middleware.RequiredRole(appContext, "admin"),
+		// middleware.RequiredRole(appContext, "admin"),
 		questiontransport.HandleCreateQuestionList(appContext),
 	)
 	questions.GET("", questiontransport.HandleGetQuestionList(appContext))
@@ -100,7 +108,7 @@ func runService(
 
 	answers := v1.Group(
 		"/answers",
-		middleware.RequiredAuthorization(appContext),
+		// middleware.RequiredAuthorization(appContext),
 	)
 	answers.POST("/new", middleware.RequiredRole(appContext, "admin"), answertransport.HandleCreateNewAnswer(appContext))
 	answers.POST("/new-list", answertransport.HandleCreateAnswerList(appContext))

@@ -8,9 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func (ur *UserRoleCreate) BeforeCreate(tx *gorm.DB) error {
+func (urc *UserRoleCreate) BeforeCreate(tx *gorm.DB) error {
 	id, err := uuid.NewRandom()
-	ur.Id = uuid.UUID(id)
+	urc.Id = uuid.UUID(id)
 
 	return err
 }

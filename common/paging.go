@@ -30,3 +30,12 @@ func (qp *QueryParams) Fulfill() {
 		qp.OrderBy = "asc"
 	}
 }
+
+type EntityPagingResult struct {
+	PreviousPage int `json:"previous_page"`
+	CurrentPage  int `json:"current_page"`
+	NextPage     int `json:"next_page"`
+	PageSize     int `json:"page_size"`
+	TotalItems   int `json:"total_items"`
+	TotalPages   int `json:"total_pages"`
+}
