@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleCreateCategoryList(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var newCategories []categoryentity.CategoryCreate
 

@@ -9,6 +9,7 @@ import (
 
 	answertransport "nexon_quiz/modules/answer/transport"
 	categorytransport "nexon_quiz/modules/category/transport"
+	difficultytransport "nexon_quiz/modules/difficulty/transport"
 	questiontransport "nexon_quiz/modules/question/transport"
 	typetransport "nexon_quiz/modules/type/transport"
 	usertransport "nexon_quiz/modules/user/transport"
@@ -84,17 +85,20 @@ func runService(
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
 
-	types := v1.Group("/categories")
-	// types.POST("/new", categorytransport.HandleCreateNewCategory(appContext))
-	// types.POST("/", categorytransport.HandleCreateQuestionList(appContext))
-	// types.GET("/:id", categorytransport.HandleGetCategory(appContext))
-	types.GET("/", typetransport.HandleGetTypeList(appContext))
+	types := v1.Group("/types")
+	types.POST("", typetransport.HandleCreateNewType(appContext))
+	types.GET("", typetransport.HandleGetTypeList(appContext))
 
-	category := v1.Group("/categories")
-	category.POST("/new", categorytransport.HandleCreateNewCategory(appContext))
-	category.POST("/", categorytransport.HandleCreateQuestionList(appContext))
-	category.GET("/:id", categorytransport.HandleGetCategory(appContext))
-	category.GET("/", categorytransport.HandleGetQuestionList(appContext))
+	difficulties := v1.Group("/difficulties")
+	difficulties.POST("", difficultytransport.HandleCreateNewDifficulty(appContext))
+	difficulties.GET("", difficultytransport.HandleGetDifficultyList(appContext))
+
+	categories := v1.Group("/categoriess")
+	categories.POST("", categorytransport.HandleCreateCategoryList(appContext))
+	categories.POST("/new", categorytransport.HandleCreateNewCategory(appContext))
+	categories.GET("", categorytransport.HandleGetCategoryList(appContext))
+	// categories.GET("/:id", categorytransport.HandleGetCategory(appContext))
+	// categories.GET("", categorytransport.HandleGetCategoryList(appContext))
 
 	questions := v1.Group(
 		"/questions",
@@ -106,7 +110,7 @@ func runService(
 		questiontransport.HandleCreateNewQuestion(appContext),
 	)
 	questions.POST(
-		"/",
+		"",
 		// middleware.RequiredRole(appContext, "admin"),
 		questiontransport.HandleCreateQuestionList(appContext),
 	)

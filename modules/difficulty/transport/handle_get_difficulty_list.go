@@ -4,14 +4,14 @@ import (
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
-	typebusiness "nexon_quiz/modules/type/business"
-	typeentity "nexon_quiz/modules/type/entity"
-	typestorage "nexon_quiz/modules/type/storage"
+	difficultybusiness "nexon_quiz/modules/difficulty/business"
+	difficultyentity "nexon_quiz/modules/difficulty/entity"
+	difficultystorage "nexon_quiz/modules/difficulty/storage"
 
 	"github.com/gin-gonic/gin"
 )
 
-func HandleGetTypeList(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleGetDifficultyList(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var queryParams common.QueryParams
 
@@ -21,7 +21,7 @@ func HandleGetTypeList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		queryParams.Fulfill()
 
-		var filter typeentity.TypeFilter
+		var filter difficultyentity.DifficultyFilter
 
 		if err := ctx.ShouldBindQuery(&filter); err != nil {
 			panic(common.ErrorInvalidRequest(err))
@@ -29,11 +29,11 @@ func HandleGetTypeList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 
-		storage := typestorage.NewTypeMySQLStorage(db)
+		storage := difficultystorage.NewDifficultyMySQLStorage(db)
 
-		business := typebusiness.NewFindTypeListBusiness(storage)
+		business := difficultybusiness.NewFindDifficultyListBusiness(storage)
 
-		data, pagination, err := business.GetTypeList(
+		data, pagination, err := business.GetDifficultyList(
 			ctx.Request.Context(),
 			&filter,
 			&queryParams,
@@ -45,7 +45,7 @@ func HandleGetTypeList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, common.NewSuccessResponse(
 			http.StatusOK,
-			"Get type list successfully",
+			"Get question difficulty list successfully",
 			data,
 			pagination,
 		))

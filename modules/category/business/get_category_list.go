@@ -28,7 +28,7 @@ func NewFindCategoryListBusiness(
 	}
 }
 
-func (biz *findCategoryListBusiness) GetQuestionList(
+func (biz *findCategoryListBusiness) GetCategoryList(
 	ctx context.Context,
 	filter *categoryentity.CategoryFilter,
 	queryParams *common.QueryParams,

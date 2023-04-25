@@ -16,5 +16,5 @@ var (
 	ErrorCannotGetListCategory    = errors.New("cannot get category list")
 	ErrorCannotUpdateCategory     = errors.New("cannot update category")
 	ErrorCannotDeleteCategory     = errors.New("cannot delete category")
-	ErrorRequesterIsNotRootAdmin  = errors.New("no permission, only root admin can do this")
+	ErrorRequesterIsNotAdmin      = errors.New("no permission, only owner can do this")
 )

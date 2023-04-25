@@ -1,17 +1,17 @@
-package categorytransport
+package typetransport
 
 import (
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
-	categorybusiness "nexon_quiz/modules/category/business"
-	categoryentity "nexon_quiz/modules/category/entity"
-	categorystorage "nexon_quiz/modules/category/storage"
+	typebusiness "nexon_quiz/modules/type/business"
+	typeentity "nexon_quiz/modules/type/entity"
+	typestorage "nexon_quiz/modules/type/storage"
 
 	"github.com/gin-gonic/gin"
 )
 
-func HandleGetCategoryList(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleGetTypeList(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var queryParams common.QueryParams
 
@@ -21,7 +21,7 @@ func HandleGetCategoryList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		queryParams.Fulfill()
 
-		var filter categoryentity.CategoryFilter
+		var filter typeentity.TypeFilter
 
 		if err := ctx.ShouldBindQuery(&filter); err != nil {
 			panic(common.ErrorInvalidRequest(err))
@@ -29,11 +29,11 @@ func HandleGetCategoryList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 
-		storage := categorystorage.NewCategoryMySQLStorage(db)
+		storage := typestorage.NewTypeMySQLStorage(db)
 
-		business := categorybusiness.NewFindCategoryListBusiness(storage)
+		business := typebusiness.NewFindTypeListBusiness(storage)
 
-		data, pagination, err := business.GetCategoryList(
+		data, pagination, err := business.GetTypeList(
 			ctx.Request.Context(),
 			&filter,
 			&queryParams,
@@ -45,7 +45,7 @@ func HandleGetCategoryList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, common.NewSuccessResponse(
 			http.StatusOK,
-			"Get question category list successfully",
+			"Get question type list successfully",
 			data,
 			pagination,
 		))

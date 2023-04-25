@@ -14,9 +14,13 @@ func (qp *QueryParams) Fulfill() {
 		qp.CurrentPage = 1
 	}
 
-	if qp.PageSize <= 5 {
-		qp.PageSize = 5
+	if qp.PageSize <= 0 {
+		qp.PageSize = 20
 	}
+
+	// if qp.PageSize <= 5 {
+	// 	qp.PageSize = 20
+	// }
 
 	if qp.PageSize >= 50 {
 		qp.PageSize = 50
