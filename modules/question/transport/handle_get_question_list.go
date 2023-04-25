@@ -1,7 +1,6 @@
 package questiontransport
 
 import (
-	"log"
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
@@ -22,7 +21,7 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		queryParams.Fulfill()
 
-		var filter questionentity.Filter
+		var filter questionentity.QuestionFilter
 
 		if err := ctx.ShouldBindQuery(&filter); err != nil {
 			panic(common.ErrorInvalidRequest(err))
@@ -33,11 +32,10 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 		storage := questionstorage.NewQuestionMySQLStorage(db)
 
 		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
-		log.Println("user role", requester.GetRole())
 
 		business := questionbusiness.NewQuestionListBusiness(storage, requester)
 
-		data, pagination, err := business.QuestionList(ctx.Request.Context(), &filter, &queryParams)
+		data, pagination, err := business.GetQuestionList(ctx.Request.Context(), &filter, &queryParams)
 
 		if err != nil {
 			panic(err)

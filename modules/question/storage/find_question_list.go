@@ -7,9 +7,9 @@ import (
 	questionentity "nexon_quiz/modules/question/entity"
 )
 
-func (s *questionMySQLStorage) QuestionList(
+func (s *questionMySQLStorage) FindQuestionList(
 	ctx context.Context,
-	filter *questionentity.Filter,
+	filter *questionentity.QuestionFilter,
 	queryParams *common.QueryParams,
 	moreKeys ...string,
 ) ([]questionentity.Question, error) {
@@ -22,30 +22,24 @@ func (s *questionMySQLStorage) QuestionList(
 	}
 
 	if f := filter; f != nil {
-		if f.Category != "" {
-			db = db.Where("type = ?", f.Category)
+		if f.Type != "" {
+			db = db.Where("type = ?", f.Type)
 		}
 
-		if len(f.Type) > 0 {
-			db = db.Where("difficulty in (?)", f.Type)
-		}
-
-		if f.Difficulty > 0 {
+		if f.Difficulty != "" {
 			db = db.Where("difficulty = ?", f.Difficulty)
 		}
 
-		// if f.Score > 0 {
-		// 	db = db.Where("level in (?)", f.Score)
-		// }
+		if f.Category != nil {
+			db = db.Where("category in (?)", f.Category)
+		}
 	}
 
 	db = db.
-		Preload("Answers", "is_deleted = 0")
-	//for _, v := range moreKeys {
-	//	db = db.Preload(v)
-	//}
+		Preload("Answers")
 
 	var offset int
+
 	var order string
 
 	if qp := queryParams; qp != nil {

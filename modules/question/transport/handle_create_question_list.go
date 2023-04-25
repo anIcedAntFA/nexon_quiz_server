@@ -18,7 +18,7 @@ func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
 		if err := ctx.ShouldBindJSON(&newQuestions); err != nil {
-			panic(err)
+			panic(common.ErrorInvalidRequest(err))
 		}
 
 		for _, v := range newQuestions {
@@ -27,9 +27,9 @@ func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 
-		questionStorage := questionstorage.NewQuestionMySQLStorage(db)
+		storage := questionstorage.NewQuestionMySQLStorage(db)
 
-		business := questionbusiness.NewCreateQuestionListBusiness(questionStorage)
+		business := questionbusiness.NewCreateQuestionListBusiness(storage)
 
 		if err := business.CreateQuestionList(ctx.Request.Context(), newQuestions); err != nil {
 			panic(err)

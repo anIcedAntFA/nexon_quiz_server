@@ -2,6 +2,7 @@ package questionbusiness
 
 import (
 	"context"
+	"net/http"
 	"nexon_quiz/common"
 	questionentity "nexon_quiz/modules/question/entity"
 
@@ -9,35 +10,42 @@ import (
 )
 
 type CreateQuestionListStorage interface {
-	CreateQuestionList(
+	InsertQuestionList(
 		ctx context.Context,
-		newQuestion []questionentity.QuestionCreate,
+		newQuestions []questionentity.QuestionCreate,
 	) error
 }
 
 type createQuestionListBusiness struct {
-	questionStorage CreateQuestionListStorage
+	storage   CreateQuestionListStorage
+	requester common.Requester
 }
 
 func NewCreateQuestionListBusiness(
-	questionStorage CreateQuestionListStorage,
+	storage CreateQuestionListStorage,
 ) *createQuestionListBusiness {
 	return &createQuestionListBusiness{
-		questionStorage: questionStorage,
+		storage: storage,
 	}
 }
 
 func (biz *createQuestionListBusiness) CreateQuestionList(
 	ctx context.Context,
-	newQuestion []questionentity.QuestionCreate,
+	newQuestions []questionentity.QuestionCreate,
 ) error {
-	for _, v := range newQuestion {
-		if err := v.Validate(); err != nil {
-			return common.ErrorInvalidRequest(err)
+	for _, question := range newQuestions {
+		if err := question.Validate(); err != nil {
+			return common.NewCustomError(
+				err,
+				err.Error(),
+				"ErrorInvalidRequest",
+			)
 		}
+
+		// question.Prepare(biz.requester.GetUserId(), question.DeletedAt)
 	}
 
-	for _, questionValue := range newQuestion {
+	for _, questionValue := range newQuestions {
 		id, _ := uuid.NewUUID()
 		questionValue.Id = uuid.UUID(id)
 
@@ -46,8 +54,14 @@ func (biz *createQuestionListBusiness) CreateQuestionList(
 		}
 	}
 
-	if err := biz.questionStorage.CreateQuestionList(ctx, newQuestion); err != nil {
-		return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
+	if err := biz.storage.InsertQuestionList(ctx, newQuestions); err != nil {
+		return common.NewFullErrorResponse(
+			http.StatusInternalServerError,
+			err,
+			questionentity.ErrorCannotCreateQuestionList.Error(),
+			err.Error(),
+			"CannotCreateQuestionList",
+		)
 	}
 
 	return nil

@@ -65,7 +65,7 @@ func (biz *createUserRoleBusiness) CreateNewUserRole(
 			err,
 			userroleentity.ErrorCannotCreateUserRole.Error(),
 			err.Error(),
-			"CannotCreateUserRole",
+			"ErrorCannotCreateUserRole",
 		)
 	}
 

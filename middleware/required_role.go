@@ -2,15 +2,19 @@ package middleware
 
 import (
 	"errors"
+	"log"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
 
 	"github.com/gin-gonic/gin"
 )
 
-func RequiredRole(appCtx appctx.AppContext, allowedRoles ...string) gin.HandlerFunc {
+func RequiredRole(appCtx appctx.AppContext, allowedRoles ...int) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		log.Println("requester1")
+
 		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
+		log.Println("requester", requester)
 
 		hasFound := false
 

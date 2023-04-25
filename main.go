@@ -77,52 +77,78 @@ func runService(
 		})
 	})
 
-	role := v1.Group("/roles")
+	// User Role API only by Root Admin
+	role := v1.Group("/roles", middleware.RequiredRole(appContext, 0))
 	role.POST("/new", userroletransport.HandleCreateNewUserRole(appContext))
 	role.GET("/:id", userroletransport.HandleGetUserRole(appContext))
 
+	// Auth API
 	auth := v1.Group("/auth")
 	auth.POST("/register", usertransport.HandleRegisterUser(appContext))
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
 
+	// Question Type API
 	types := v1.Group("/types")
-	types.POST("", typetransport.HandleCreateNewType(appContext))
+	types.POST("",
+		middleware.RequiredRole(appContext, 0, 1),
+		typetransport.HandleCreateNewType(appContext),
+	)
 	types.GET("", typetransport.HandleGetTypeList(appContext))
 
+	// Question Difficulty API
 	difficulties := v1.Group("/difficulties")
-	difficulties.POST("", difficultytransport.HandleCreateNewDifficulty(appContext))
+	difficulties.POST("",
+		middleware.RequiredRole(appContext, 0, 1),
+		difficultytransport.HandleCreateNewDifficulty(appContext),
+	)
 	difficulties.GET("", difficultytransport.HandleGetDifficultyList(appContext))
 
+	// Question Category API
 	categories := v1.Group("/categoriess")
-	categories.POST("", categorytransport.HandleCreateCategoryList(appContext))
-	categories.POST("/new", categorytransport.HandleCreateNewCategory(appContext))
+	categories.POST(
+		"",
+		middleware.RequiredRole(appContext, 0, 1),
+		categorytransport.HandleCreateCategoryList(appContext),
+	)
+	categories.POST(
+		"/new",
+		middleware.RequiredRole(appContext, 0, 1),
+		categorytransport.HandleCreateNewCategory(appContext),
+	)
+	categories.GET("/:id", categorytransport.HandleGetCategory(appContext))
 	categories.GET("", categorytransport.HandleGetCategoryList(appContext))
-	// categories.GET("/:id", categorytransport.HandleGetCategory(appContext))
-	// categories.GET("", categorytransport.HandleGetCategoryList(appContext))
 
+	// Question API
 	questions := v1.Group(
 		"/questions",
-		// middleware.RequiredAuthorization(appContext),
+		middleware.RequiredAuthorization(appContext),
 	)
 	questions.POST(
 		"/new",
-		// middleware.RequiredRole(appContext, "admin"),
+		middleware.RequiredRole(appContext, 0, 1),
 		questiontransport.HandleCreateNewQuestion(appContext),
 	)
 	questions.POST(
 		"",
-		// middleware.RequiredRole(appContext, "admin"),
+		middleware.RequiredRole(appContext, 0, 1),
 		questiontransport.HandleCreateQuestionList(appContext),
 	)
 	questions.GET("", questiontransport.HandleGetQuestionList(appContext))
 	questions.GET("/:id", questiontransport.HandleGetQuestion(appContext))
 
+	// Answer API
 	answers := v1.Group(
 		"/answers",
-		// middleware.RequiredAuthorization(appContext),
+		middleware.RequiredAuthorization(appContext),
 	)
-	answers.POST("/new", middleware.RequiredRole(appContext, "admin"), answertransport.HandleCreateNewAnswer(appContext))
-	answers.POST("/new-list", answertransport.HandleCreateAnswerList(appContext))
+	answers.POST("/new",
+		middleware.RequiredRole(appContext, 0, 1),
+		answertransport.HandleCreateNewAnswer(appContext),
+	)
+	answers.POST("",
+		middleware.RequiredRole(appContext, 0, 1),
+		answertransport.HandleCreateNewAnswer(appContext),
+	)
 
 	router.Run()
 

@@ -51,7 +51,7 @@ func (biz *loginBusiness) Login(
 	simpleUser := common.SimpleUser{
 		SQLModel: user.SQLModel,
 		Username: user.Username,
-		Role:     user.Role.String(),
+		RoleId:   user.RoleId,
 	}
 
 	if err != nil {
@@ -66,7 +66,7 @@ func (biz *loginBusiness) Login(
 
 	payload := tokenprovider.TokenPayload{
 		UserId:   user.Id,
-		Role:     user.Role.String(),
+		RoleId:   user.RoleId,
 		Username: user.Username,
 	}
 

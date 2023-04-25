@@ -1,25 +1,18 @@
 package userentity
 
 import (
-	"errors"
-	"fmt"
 	"nexon_quiz/common"
-	"strings"
 
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 )
-
-const EntityName = "User"
 
 type User struct {
 	common.SQLModel
-	Email     string   `json:"email" gorm:"column:email;"`
-	Password  string   `json:"-" gorm:"column:password;"`
-	Salt      string   `json:"-" gorm:"column:salt;"`
-	Username  string   `json:"username" gorm:"column:username;"`
-	Role      UserRole `json:"role" gorm:"column:role;type:ENUM('user', 'admin')"`
-	IsDeleted int      `json:"is_deleted" gorm:"column:is_deleted;"`
+	Email    string    `json:"email" gorm:"column:email;"`
+	Password string    `json:"-" gorm:"column:password;"`
+	Salt     string    `json:"-" gorm:"column:salt;"`
+	Username string    `json:"username" gorm:"column:username;"`
+	RoleId   uuid.UUID `json:"role_id" gorm:"column:role_id;"`
 }
 
 func (User) TableName() string {
@@ -34,89 +27,6 @@ func (u *User) GetEmail() string {
 	return u.Email
 }
 
-func (u *User) GetRole() string {
-	return u.Role.String()
+func (u *User) GetRole() uuid.UUID {
+	return u.RoleId
 }
-
-func (user *UserCreate) BeforeCreate(tx *gorm.DB) error {
-	id, err := uuid.NewRandom()
-	user.Id = uuid.UUID(id)
-
-	return err
-}
-
-type UserCreate struct {
-	common.SQLModel
-	Email     string   `json:"email" gorm:"column:email;"`
-	Password  string   `json:"password" gorm:"column:password;"`
-	Username  string   `json:"username" gorm:"column:username;"`
-	Salt      string   `json:"-" gorm:"column:salt;"`
-	Role      UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
-	IsDeleted int      `json:"is_deleted" gorm:"column:is_deleted;"`
-}
-
-func (UserCreate) TableName() string {
-	return User{}.TableName()
-}
-
-type UserUpdate struct {
-	common.SQLModel
-	Password  *string  `json:"password" gorm:"column:password;"`
-	Username  *string  `json:"username" gorm:"column:username;"`
-	Salt      string   `json:"-" gorm:"column:salt;"`
-	Role      UserRole `json:"-" gorm:"column:role;type:ENUM('user','admin');default:user"`
-	IsDeleted *int     `json:"-" gorm:"column:is_deleted;"`
-}
-
-func (UserUpdate) TableName() string {
-	return User{}.TableName()
-}
-
-type UserLogin struct {
-	Email    string `json:"email" form:"email" gorm:"column:email;"`
-	Password string `json:"password" form:"password" gorm:"column:password;"`
-}
-
-func (u *UserLogin) TableName() string {
-	return User{}.TableName()
-}
-
-func (data *UserCreate) Validate() error {
-	dataNames := map[string]string{
-		"username": data.Username,
-		"email":    data.Email,
-		"password": data.Password,
-	}
-
-	for k, v := range dataNames {
-		v = strings.TrimSpace(v)
-
-		if v == "" {
-			return ErrorFieldIsEmpty(k)
-		}
-	}
-
-	return nil
-}
-
-func ErrorFieldIsEmpty(field string) error {
-	return fmt.Errorf("%s cannot be empty", field)
-}
-
-var (
-	ErrorEmailOrPasswordInvalid = common.NewCustomError(
-		errors.New("email or password invalid"),
-		"email or password invalid",
-		"ErrorEmailOrPasswordInvalid",
-	)
-	ErrorEmailExisted = common.NewCustomError(
-		errors.New("email has already existed"),
-		"email has already existed",
-		"ErrorEmailExisted",
-	)
-	ErrorUserDisabledOrBanned = common.NewCustomError(
-		errors.New("user has been disabled or banned"),
-		"user has been disabled or banned",
-		"ErrorUserDisabledOrBanned",
-	)
-)

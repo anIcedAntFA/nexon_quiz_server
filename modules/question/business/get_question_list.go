@@ -2,17 +2,15 @@ package questionbusiness
 
 import (
 	"context"
-	"log"
 	"math"
 	"nexon_quiz/common"
 	questionentity "nexon_quiz/modules/question/entity"
-	userentity "nexon_quiz/modules/user/entity"
 )
 
 type QuestionListStorage interface {
-	QuestionList(
+	FindQuestionList(
 		ctx context.Context,
-		filter *questionentity.Filter,
+		filter *questionentity.QuestionFilter,
 		queryParams *common.QueryParams,
 		moreKeys ...string,
 	) ([]questionentity.Question, error)
@@ -33,23 +31,14 @@ func NewQuestionListBusiness(
 	}
 }
 
-func (biz *questionListBusiness) QuestionList(
+func (biz *questionListBusiness) GetQuestionList(
 	ctx context.Context,
-	filter *questionentity.Filter,
+	filter *questionentity.QuestionFilter,
 	queryParams *common.QueryParams,
 ) ([]questionentity.Question, *questionentity.QuestionPagingResult, error) {
 	ctxStore := context.WithValue(ctx, common.CurrentUser, biz.requester)
 
-	questions, err := biz.storage.QuestionList(ctxStore, filter, queryParams)
-
-	if biz.requester.GetRole() == userentity.RoleUser.String() {
-		for _, question := range questions {
-			for _, answer := range *question.Answers {
-				answer.Correct = 0
-				log.Println("answer", answer)
-			}
-		}
-	}
+	questions, err := biz.storage.FindQuestionList(ctxStore, filter, queryParams)
 
 	var pagingResult questionentity.QuestionPagingResult
 

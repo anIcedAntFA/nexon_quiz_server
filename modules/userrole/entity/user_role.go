@@ -2,6 +2,8 @@ package userroleentity
 
 import (
 	"nexon_quiz/common"
+
+	"github.com/google/uuid"
 )
 
 type UserRoleContent int
@@ -21,4 +23,12 @@ type UserRole struct {
 
 func (UserRole) TableName() string {
 	return "user_roles"
+}
+
+func (ur *UserRole) GetUserRoleId() uuid.UUID {
+	return ur.Id
+}
+
+func (ur *UserRole) GetUserRole() int {
+	return int(ur.Content)
 }

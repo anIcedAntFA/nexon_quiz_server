@@ -52,7 +52,7 @@ func RequiredAuthorization(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		if user.IsDeleted == 1 {
+		if user.DeletedAt != nil {
 			panic(common.ErrorNoPermission(errors.New("user has been deleted or banned")))
 		}
 

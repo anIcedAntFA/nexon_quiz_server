@@ -17,7 +17,7 @@ const TimeLayout = "2006-01-02T15:04:05.999999"
 type Requester interface {
 	GetUserId() uuid.UUID
 	GetEmail() string
-	GetRole() string
+	GetRole() int
 }
 
 func AppRecover() {

@@ -24,12 +24,13 @@ func HandleRegisterUser(appCtx appctx.AppContext) func(*gin.Context) {
 		db := appCtx.GetMainDBConnection()
 
 		storage := userstorage.NewUserMySQLStorage(db)
+
 		md5 := hasher.NewMd5Hash()
+
 		business := userbusiness.NewRegisterUserBusiness(storage, md5)
 
 		if err := business.Register(ctx.Request.Context(), &newUser); err != nil {
-			ctx.JSON(http.StatusBadRequest, err)
-			return
+			panic(err)
 		}
 
 		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(

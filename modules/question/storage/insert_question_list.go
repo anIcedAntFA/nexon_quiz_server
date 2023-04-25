@@ -6,13 +6,13 @@ import (
 	questionentity "nexon_quiz/modules/question/entity"
 )
 
-func (s *questionMySQLStorage) CreateQuestionList(
+func (s *questionMySQLStorage) InsertQuestionList(
 	ctx context.Context,
-	newQuestion []questionentity.QuestionCreate,
+	newQuestions []questionentity.QuestionCreate,
 ) error {
 	db := s.db
 
-	if err := db.Create(&newQuestion).Error; err != nil {
+	if err := db.Create(&newQuestions).Error; err != nil {
 		return common.ErrorDB(err)
 	}
 

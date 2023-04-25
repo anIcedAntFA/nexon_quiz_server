@@ -6,7 +6,7 @@ import (
 	userentity "nexon_quiz/modules/user/entity"
 )
 
-func (s *userMySQLStorage) CreateUser(ctx context.Context, newUser *userentity.UserCreate) error {
+func (s *userMySQLStorage) InsertNewUser(ctx context.Context, newUser *userentity.UserCreate) error {
 	//if u implement many action => open transaction & commit
 	db := s.db.Begin()
 
