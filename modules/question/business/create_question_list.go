@@ -12,7 +12,7 @@ import (
 type CreateQuestionListStorage interface {
 	InsertQuestionList(
 		ctx context.Context,
-		newQuestions []questionentity.QuestionCreate,
+		newQuestions questionentity.QuestionsCreate,
 	) error
 }
 
@@ -23,15 +23,17 @@ type createQuestionListBusiness struct {
 
 func NewCreateQuestionListBusiness(
 	storage CreateQuestionListStorage,
+	requester common.Requester,
 ) *createQuestionListBusiness {
 	return &createQuestionListBusiness{
-		storage: storage,
+		storage:   storage,
+		requester: requester,
 	}
 }
 
 func (biz *createQuestionListBusiness) CreateQuestionList(
 	ctx context.Context,
-	newQuestions []questionentity.QuestionCreate,
+	newQuestions questionentity.QuestionsCreate,
 ) error {
 	for _, question := range newQuestions {
 		if err := question.Validate(); err != nil {
@@ -42,7 +44,7 @@ func (biz *createQuestionListBusiness) CreateQuestionList(
 			)
 		}
 
-		// question.Prepare(biz.requester.GetUserId(), question.DeletedAt)
+		question.Prepare(biz.requester.GetUserId(), question.DeletedAt)
 	}
 
 	for _, questionValue := range newQuestions {

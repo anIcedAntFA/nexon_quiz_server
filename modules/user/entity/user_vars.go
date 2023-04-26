@@ -3,7 +3,6 @@ package userentity
 import (
 	"nexon_quiz/common"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -22,16 +21,18 @@ type UserCreate struct {
 	Password string    `json:"password" gorm:"column:password;"`
 	Username string    `json:"username" gorm:"column:username;"`
 	Salt     string    `json:"-" gorm:"column:salt;"`
-	RoleId   uuid.UUID `json:"role_id" gorm:"column:role_id;"`
+	RoleId   uuid.UUID `json:"-" gorm:"column:role_id;"`
 }
 
 func (UserCreate) TableName() string {
 	return User{}.TableName()
 }
 
-func (uc *UserCreate) Prepare(deleted_at *time.Time) {
-	uc.DeletedAt = nil
-}
+// func (uc *UserCreate) Prepare(userRoleId uuid.UUID, password string) {
+// 	uc.RoleId = userRoleId
+// 	uc.Password = password
+// 	uc.DeletedAt = nil
+// }
 
 func (uc *UserCreate) Validate() error {
 	userCreateMap := map[string]string{
@@ -56,7 +57,7 @@ type UserUpdate struct {
 	Password *string   `json:"password" gorm:"column:password;"`
 	Salt     string    `json:"-" gorm:"column:salt;"`
 	Username *string   `json:"username" gorm:"column:username;"`
-	RoleId   uuid.UUID `json:"role_id" gorm:"column:role_id;"`
+	RoleId   uuid.UUID `json:"-" gorm:"column:role_id;"`
 }
 
 func (UserUpdate) TableName() string {

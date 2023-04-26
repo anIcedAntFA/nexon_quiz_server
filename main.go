@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
 	"nexon_quiz/middleware"
 	"os"
@@ -78,7 +79,7 @@ func runService(
 	})
 
 	// User Role API only by Root Admin
-	role := v1.Group("/roles", middleware.RequiredRole(appContext, 0))
+	role := v1.Group("/roles", middleware.RequiredRole(appContext, common.RootAdminRole))
 	role.POST("/new", userroletransport.HandleCreateNewUserRole(appContext))
 	role.GET("/:id", userroletransport.HandleGetUserRole(appContext))
 
@@ -90,7 +91,7 @@ func runService(
 	// Question Type API
 	types := v1.Group("/types")
 	types.POST("",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		typetransport.HandleCreateNewType(appContext),
 	)
 	types.GET("", typetransport.HandleGetTypeList(appContext))
@@ -98,7 +99,7 @@ func runService(
 	// Question Difficulty API
 	difficulties := v1.Group("/difficulties")
 	difficulties.POST("",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		difficultytransport.HandleCreateNewDifficulty(appContext),
 	)
 	difficulties.GET("", difficultytransport.HandleGetDifficultyList(appContext))
@@ -107,12 +108,12 @@ func runService(
 	categories := v1.Group("/categoriess")
 	categories.POST(
 		"",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		categorytransport.HandleCreateCategoryList(appContext),
 	)
 	categories.POST(
 		"/new",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		categorytransport.HandleCreateNewCategory(appContext),
 	)
 	categories.GET("/:id", categorytransport.HandleGetCategory(appContext))
@@ -125,12 +126,12 @@ func runService(
 	)
 	questions.POST(
 		"/new",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		questiontransport.HandleCreateNewQuestion(appContext),
 	)
 	questions.POST(
 		"",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		questiontransport.HandleCreateQuestionList(appContext),
 	)
 	questions.GET("", questiontransport.HandleGetQuestionList(appContext))
@@ -142,11 +143,11 @@ func runService(
 		middleware.RequiredAuthorization(appContext),
 	)
 	answers.POST("/new",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		answertransport.HandleCreateNewAnswer(appContext),
 	)
 	answers.POST("",
-		middleware.RequiredRole(appContext, 0, 1),
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		answertransport.HandleCreateNewAnswer(appContext),
 	)
 

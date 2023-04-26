@@ -1,6 +1,8 @@
 package answerentity
 
 import (
+	"database/sql/driver"
+	"errors"
 	"fmt"
 	"nexon_quiz/common"
 	"strings"
@@ -15,8 +17,7 @@ type Answer struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"-" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    int       `json:"correct" gorm:"column:correct"`
-	IsDeleted  bool      `json:"-" gorm:"column:is_deleted;"`
+	Correct    BitBool   `json:"-" gorm:"column:correct"`
 }
 
 func (Answer) TableName() string {
@@ -30,12 +31,13 @@ func (ac *AnswerCreate) BeforeCreate(tx *gorm.DB) error {
 	return err
 }
 
+type Answers = []Answer
+
 type AnswerCreate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
 	Content    string    `json:"content" gorm:"column:content"`
-	Correct    int       `json:"correct" gorm:"column:correct"`
-	IsDeleted  bool      `json:"is_deleted" gorm:"column:is_deleted;"`
+	Correct    BitBool   `json:"correct" gorm:"column:correct"`
 }
 
 func (AnswerCreate) TableName() string {
@@ -57,17 +59,42 @@ func (ac *AnswerCreate) Validate() error {
 type AnswerUpdate struct {
 	common.SQLModel
 	QuestionId uuid.UUID `json:"question_id" gorm:"column:question_id"`
-	Content    string    `json:"content" gorm:"column:content"`
-	Correct    int       `json:"correct" gorm:"column:correct"`
-	IsDeleted  bool      `json:"is_deleted" gorm:"column:is_deleted;"`
+	Content    *string   `json:"content" gorm:"column:content"`
+	Correct    *BitBool  `json:"correct" gorm:"column:correct"`
 }
 
 func (*AnswerUpdate) TableName() string {
 	return "answers"
 }
 
-type Answers []Answer
-
 func ErrorFieldIsEmpty(field string) error {
 	return fmt.Errorf("%s cannot be empty", field)
+}
+
+// BitBool is an implementation of a bool for the MySQL type BIT(1).
+// This type allows you to avoid wasting an entire byte for MySQL's boolean type TINYINT.
+type BitBool bool
+
+// Value implements the driver.Valuer interface,
+// and turns the BitBool into a bitfield (BIT(1)) for MySQL storage.
+func (bb BitBool) Value() (driver.Value, error) {
+	if bb {
+		return []byte{1}, nil
+	} else {
+		return []byte{0}, nil
+	}
+}
+
+// Scan implements the sql.Scanner interface,
+// and turns the bitfield incoming from MySQL into a BitBool
+func (bb *BitBool) Scan(src interface{}) error {
+	v, ok := src.([]byte)
+
+	if !ok {
+		return errors.New("bad []byte type assertion")
+	}
+
+	*bb = v[0] == 1
+
+	return nil
 }

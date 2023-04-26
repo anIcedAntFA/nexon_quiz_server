@@ -7,16 +7,19 @@ import (
 )
 
 type CreateQuestionStorage interface {
-	CreateQuestion(ctx context.Context, newQuestion *questionentity.QuestionCreate) error
+	CreateQuestion(
+		ctx context.Context,
+		newQuestion *questionentity.QuestionCreate,
+	) error
 }
 
 type createQuestionBusiness struct {
-	questionStorage CreateQuestionStorage
+	storage CreateQuestionStorage
 }
 
-func NewCreateQuestionBusiness(questionStorage CreateQuestionStorage) *createQuestionBusiness {
+func NewCreateQuestionBusiness(storage CreateQuestionStorage) *createQuestionBusiness {
 	return &createQuestionBusiness{
-		questionStorage: questionStorage,
+		storage: storage,
 	}
 }
 
@@ -28,7 +31,7 @@ func (biz *createQuestionBusiness) CreateQuestion(
 		return common.ErrorInvalidRequest(err)
 	}
 
-	if err := biz.questionStorage.CreateQuestion(ctx, newQuestion); err != nil {
+	if err := biz.storage.CreateQuestion(ctx, newQuestion); err != nil {
 		return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
 	}
 

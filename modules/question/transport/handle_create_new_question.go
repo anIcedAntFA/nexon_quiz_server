@@ -1,7 +1,6 @@
 package questiontransport
 
 import (
-	"log"
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
@@ -23,7 +22,6 @@ func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		newQuestion.OwnerId = requester.GetUserId()
-		log.Println("OwnerId", newQuestion)
 
 		db := appCtx.GetMainDBConnection()
 

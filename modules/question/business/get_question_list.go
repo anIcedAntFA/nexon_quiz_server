@@ -7,7 +7,7 @@ import (
 	questionentity "nexon_quiz/modules/question/entity"
 )
 
-type QuestionListStorage interface {
+type FindQuestionListStorage interface {
 	FindQuestionList(
 		ctx context.Context,
 		filter *questionentity.QuestionFilter,
@@ -17,12 +17,12 @@ type QuestionListStorage interface {
 }
 
 type questionListBusiness struct {
-	storage   QuestionListStorage
+	storage   FindQuestionListStorage
 	requester common.Requester
 }
 
 func NewQuestionListBusiness(
-	storage QuestionListStorage,
+	storage FindQuestionListStorage,
 	requester common.Requester,
 ) *questionListBusiness {
 	return &questionListBusiness{

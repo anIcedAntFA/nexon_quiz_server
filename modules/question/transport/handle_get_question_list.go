@@ -35,7 +35,11 @@ func HandleGetQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		business := questionbusiness.NewQuestionListBusiness(storage, requester)
 
-		data, pagination, err := business.GetQuestionList(ctx.Request.Context(), &filter, &queryParams)
+		data, pagination, err := business.GetQuestionList(
+			ctx.Request.Context(),
+			&filter,
+			&queryParams,
+		)
 
 		if err != nil {
 			panic(err)

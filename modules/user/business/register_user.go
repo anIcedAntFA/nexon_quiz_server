@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"nexon_quiz/common"
 	userentity "nexon_quiz/modules/user/entity"
+
+	"github.com/google/uuid"
 )
 
 type RegisterUserStorage interface {
@@ -14,7 +16,7 @@ type RegisterUserStorage interface {
 		moreInfo ...string,
 	) (*userentity.User, error)
 
-	InsertNewUser(ctx context.Context, newUser *userentity.UserCreate) error
+	InsertNewUser(ctx context.Context, newUser *userentity.UserCreate, moreKeys ...string) error
 }
 
 type Hasher interface {
@@ -26,14 +28,21 @@ type registerUserBusiness struct {
 	hasher  Hasher
 }
 
-func NewRegisterUserBusiness(storage RegisterUserStorage, hasher Hasher) *registerUserBusiness {
+func NewRegisterUserBusiness(
+	storage RegisterUserStorage,
+	hasher Hasher,
+) *registerUserBusiness {
 	return &registerUserBusiness{
 		storage: storage,
 		hasher:  hasher,
 	}
 }
 
-func (biz *registerUserBusiness) Register(ctx context.Context, newUser *userentity.UserCreate) error {
+func (biz *registerUserBusiness) Register(
+	ctx context.Context,
+	newUser *userentity.UserCreate,
+	moreKeys ...string,
+) error {
 	user, _ := biz.storage.FindUser(ctx, map[string]interface{}{"email": newUser.Email})
 
 	if user != nil {
@@ -52,9 +61,7 @@ func (biz *registerUserBusiness) Register(ctx context.Context, newUser *userenti
 		)
 	}
 
-	newUser.Prepare(newUser.DeletedAt)
-
-	// newUser.RoleId = "c39c2f6a-3ac9-4d6b-a21f-fd1ba94eec38"
+	newUser.RoleId = uuid.MustParse(common.UserRole)
 
 	salt := common.GenerateSalt(50)
 
@@ -62,7 +69,7 @@ func (biz *registerUserBusiness) Register(ctx context.Context, newUser *userenti
 
 	newUser.Salt = salt
 
-	if err := biz.storage.InsertNewUser(ctx, newUser); err != nil {
+	if err := biz.storage.InsertNewUser(ctx, newUser, "UserRole"); err != nil {
 		return common.NewFullErrorResponse(
 			http.StatusInternalServerError,
 			err,

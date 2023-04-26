@@ -8,7 +8,7 @@ import (
 
 func (s *questionMySQLStorage) InsertQuestionList(
 	ctx context.Context,
-	newQuestions []questionentity.QuestionCreate,
+	newQuestions questionentity.QuestionsCreate,
 ) error {
 	db := s.db
 

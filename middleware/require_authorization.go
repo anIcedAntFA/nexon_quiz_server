@@ -38,6 +38,7 @@ func RequiredAuthorization(appCtx appctx.AppContext) gin.HandlerFunc {
 		}
 
 		db := appCtx.GetMainDBConnection()
+
 		storage := userstorage.NewUserMySQLStorage(db)
 
 		payload, err := tokenProvider.Validate(token)
@@ -46,7 +47,10 @@ func RequiredAuthorization(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(err)
 		}
 
-		user, err := storage.FindUser(ctx.Request.Context(), map[string]interface{}{"id": payload.UserId})
+		user, err := storage.FindUser(
+			ctx.Request.Context(),
+			map[string]interface{}{"id": payload.UserId},
+		)
 
 		if err != nil {
 			panic(err)

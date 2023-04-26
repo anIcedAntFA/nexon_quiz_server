@@ -27,6 +27,10 @@ func (u *User) GetEmail() string {
 	return u.Email
 }
 
-func (u *User) GetRole() uuid.UUID {
+func (u *User) GetRoleId() uuid.UUID {
 	return u.RoleId
+}
+
+func (u *User) GetRole() string {
+	return u.RoleId.String()
 }

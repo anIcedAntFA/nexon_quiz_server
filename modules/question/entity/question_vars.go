@@ -43,13 +43,12 @@ type QuestionCreate struct {
 	common.SQLModel
 	OwnerId      uuid.UUID                   `json:"-" gorm:"column:owner_id;"`
 	Content      string                      `json:"content" gorm:"column:content;"`
-	TypeId       string                      `json:"type_id" gorm:"column:type_id;"`
-	DifficultyId string                      `json:"difficulty_id" gorm:"column:difficulty_id;"`
-	CategoryId   string                      `json:"category_id" gorm:"column:category_id;"`
+	TypeId       uuid.UUID                   `json:"type_id" gorm:"column:type_id;"`
+	DifficultyId uuid.UUID                   `json:"difficulty_id" gorm:"column:difficulty_id;"`
+	CategoryId   uuid.UUID                   `json:"category_id" gorm:"column:category_id;"`
 	PlusScore    int                         `json:"plus_score" gorm:"column:plus_score;"`
 	MinusScore   int                         `json:"minus_score" gorm:"column:minus_score;"`
 	Time         int                         `json:"time" gorm:"column:time;"`
-	IsDeleted    int                         `json:"is_deleted" gorm:"column:is_deleted;"`
 	Answers      *answerentity.AnswersCreate `json:"answers" gorm:"foreignKey:QuestionId"`
 }
 
@@ -68,9 +67,9 @@ func (qc *QuestionCreate) Prepare(ownerId uuid.UUID, deleted_at *time.Time) {
 func (qc *QuestionCreate) Validate() error {
 	questionCreateMap := map[string]string{
 		"content":       qc.Content,
-		"type_id":       qc.TypeId,
-		"difficulty_id": qc.CategoryId,
-		"category_id":   qc.CategoryId,
+		"type_id":       qc.TypeId.String(),
+		"difficulty_id": qc.CategoryId.String(),
+		"category_id":   qc.CategoryId.String(),
 	}
 
 	for _, question := range questionCreateMap {
@@ -84,6 +83,8 @@ func (qc *QuestionCreate) Validate() error {
 	return nil
 }
 
+type QuestionsCreate = []*QuestionCreate
+
 type QuestionUpdate struct {
 	common.SQLModel
 	Content      *string `json:"content" gorm:"column:content;"`
@@ -94,7 +95,6 @@ type QuestionUpdate struct {
 	MinusScore   *int    `json:"minus_score" gorm:"column:minus_score;"`
 	Time         *int    `json:"time" gorm:"column:time;"`
 	Status       *int    `json:"status" gorm:"column:status;default:1;"`
-	IsDeleted    *int    `json:"is_deleted" gorm:"column:is_deleted;"`
 }
 
 func (QuestionUpdate) TableName() string {

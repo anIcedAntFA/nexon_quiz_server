@@ -13,7 +13,7 @@ import (
 
 func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var newQuestions []questionentity.QuestionCreate
+		var newQuestions questionentity.QuestionsCreate
 
 		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
@@ -21,15 +21,15 @@ func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 			panic(common.ErrorInvalidRequest(err))
 		}
 
-		for _, v := range newQuestions {
-			v.OwnerId = requester.GetUserId()
+		for _, newQuestion := range newQuestions {
+			newQuestion.OwnerId = requester.GetUserId()
 		}
 
 		db := appCtx.GetMainDBConnection()
 
 		storage := questionstorage.NewQuestionMySQLStorage(db)
 
-		business := questionbusiness.NewCreateQuestionListBusiness(storage)
+		business := questionbusiness.NewCreateQuestionListBusiness(storage, requester)
 
 		if err := business.CreateQuestionList(ctx.Request.Context(), newQuestions); err != nil {
 			panic(err)
@@ -37,7 +37,7 @@ func HandleCreateQuestionList(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(
 			http.StatusCreated,
-			"Create new question successfully",
+			"Create new question list successfully",
 			true,
 		))
 	}
