@@ -9,7 +9,7 @@ import (
 )
 
 type FindQuestionStorage interface {
-	FindQuestion(
+	FindQuestionByCondition(
 		ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string,
@@ -24,19 +24,23 @@ func NewFindQuestionBusiness(storage FindQuestionStorage) *findQuestionBusiness 
 	return &findQuestionBusiness{storage: storage}
 }
 
-func (biz findQuestionBusiness) FindQuestion(
+func (biz *findQuestionBusiness) GetQuestionByCondition(
 	ctx context.Context,
 	condition map[string]interface{},
 	moreKeys ...string,
 ) (*questionentity.Question, error) {
-	result, err := biz.storage.FindQuestion(ctx, condition, "Answers")
+	result, err := biz.storage.FindQuestionByCondition(ctx, condition, "Answers")
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, common.ErrorRecordNotFound
+			return nil, questionentity.ErrorQuestionNotFound
 		}
 
-		return nil, common.ErrorEntityNotFound(questionentity.EntityName, err)
+		return nil, common.NewCustomError(
+			err,
+			questionentity.ErrorCannotGetQuestion.Error(),
+			"ErrorCannotGetQuestion",
+		)
 	}
 
 	return result, err

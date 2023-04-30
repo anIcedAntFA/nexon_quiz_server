@@ -13,7 +13,7 @@ import (
 
 func HandleCreateCategoryList(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var newCategories []categoryentity.CategoryCreate
+		var newCategories categoryentity.CategoriesCreate
 
 		if err := ctx.ShouldBindJSON(&newCategories); err != nil {
 			panic(err)

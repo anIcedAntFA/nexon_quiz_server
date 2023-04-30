@@ -2,7 +2,6 @@ package categorybusiness
 
 import (
 	"context"
-	"net/http"
 	"nexon_quiz/common"
 	categoryentity "nexon_quiz/modules/category/entity"
 
@@ -10,7 +9,7 @@ import (
 )
 
 type FindCategoryStorage interface {
-	FindCategory(
+	FindCategoryByCondition(
 		ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string,
@@ -30,19 +29,17 @@ func (biz *findCategoryBusiness) GetCategoryByCondition(
 	condition map[string]interface{},
 	moreKeys ...string,
 ) (*categoryentity.Category, error) {
-	data, err := biz.storage.FindCategory(ctx, condition)
+	data, err := biz.storage.FindCategoryByCondition(ctx, condition)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, common.ErrorRecordNotFound
+			return nil, categoryentity.ErrorCategoryNotFound
 		}
 
-		return nil, common.NewFullErrorResponse(
-			http.StatusInternalServerError,
+		return nil, common.NewCustomError(
 			err,
-			categoryentity.ErrorCannotGetListCategory.Error(),
-			err.Error(),
-			"CannotGetCategory",
+			categoryentity.ErrorCategoryNotFound.Error(),
+			"ErrorCannotGetCategory",
 		)
 	}
 

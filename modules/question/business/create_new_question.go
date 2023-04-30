@@ -6,29 +6,29 @@ import (
 	questionentity "nexon_quiz/modules/question/entity"
 )
 
-type CreateQuestionStorage interface {
-	CreateQuestion(
+type CreateQuestionRepository interface {
+	CreateNewQuestion(
 		ctx context.Context,
 		newQuestion *questionentity.QuestionCreate,
 	) error
 }
 
 type createQuestionBusiness struct {
-	storage   CreateQuestionStorage
-	requester common.Requester
+	requester  common.Requester
+	repository CreateQuestionRepository
 }
 
 func NewCreateQuestionBusiness(
-	storage CreateQuestionStorage,
 	requester common.Requester,
+	repository CreateQuestionRepository,
 ) *createQuestionBusiness {
 	return &createQuestionBusiness{
-		storage:   storage,
-		requester: requester,
+		requester:  requester,
+		repository: repository,
 	}
 }
 
-func (biz *createQuestionBusiness) CreateQuestion(
+func (biz *createQuestionBusiness) CreateNewQuestion(
 	ctx context.Context,
 	newQuestion *questionentity.QuestionCreate,
 ) error {
@@ -42,14 +42,8 @@ func (biz *createQuestionBusiness) CreateQuestion(
 
 	newQuestion.Prepare(biz.requester.GetRoleId(), 5, 5, 40)
 
-	// newQuestion.TypeId
-
-	if err := biz.storage.CreateQuestion(ctx, newQuestion); err != nil {
-		return common.NewCustomError(
-			err,
-			questionentity.ErrorCannotCreateQuestion.Error(),
-			"ErrorCannotCreateQuestion",
-		)
+	if err := biz.repository.CreateNewQuestion(ctx, newQuestion); err != nil {
+		return err
 	}
 
 	return nil

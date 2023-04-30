@@ -13,7 +13,9 @@ func (cs *categoryMySQLStorage) FindCategoryList(
 	queryParams *common.QueryParams,
 	moreKeys ...string,
 ) ([]categoryentity.Category, error) {
-	db := cs.db.Table(categoryentity.Category{}.TableName())
+	db := cs.db.
+		Table(categoryentity.Category{}.TableName()).
+		Where("deleted_at IS NULL")
 
 	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
 		return nil, common.ErrorDB(err)
@@ -22,8 +24,6 @@ func (cs *categoryMySQLStorage) FindCategoryList(
 	if content := filter.Content; content != nil {
 		db = db.Where("content = ?", *content)
 	}
-
-	var offset int
 
 	var order string
 
@@ -34,16 +34,13 @@ func (cs *categoryMySQLStorage) FindCategoryList(
 			db = db.Where("content LIKE ?", searchStr)
 		}
 
-		offset = (queryParams.CurrentPage - 1) * queryParams.PageSize
-
 		order = fmt.Sprintf("%s %s", queryParams.SortBy, queryParams.OrderBy)
 	}
 
 	var data []categoryentity.Category
 
 	if err := db.
-		Offset(offset).
-		Limit(queryParams.PageSize).
+		Select("*").
 		Order(order).
 		Find(&data).
 		Error; err != nil {

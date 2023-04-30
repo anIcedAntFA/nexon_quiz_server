@@ -8,20 +8,14 @@ import (
 	"gorm.io/gorm"
 )
 
-func (cs *categoryMySQLStorage) FindCategory(
+func (cs *categoryMySQLStorage) FindCategoryByCondition(
 	ctx context.Context,
 	condition map[string]interface{},
 	moreKeys ...string,
 ) (*categoryentity.Category, error) {
-	db := cs.db
-
-	for _, v := range moreKeys {
-		db = db.Preload(v)
-	}
-
 	var data categoryentity.Category
 
-	if err := db.Where(condition).First(&data).Error; err != nil {
+	if err := cs.db.Where(condition).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, categoryentity.ErrorCategoryNotFound
 		}

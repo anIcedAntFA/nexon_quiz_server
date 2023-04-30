@@ -122,14 +122,14 @@ func runService(
 	// Question Category API
 	categories := v1.Group("/categoriess", middleware.RequiredAuthorization(appContext))
 	categories.POST(
-		"",
-		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
-		categorytransport.HandleCreateCategoryList(appContext),
-	)
-	categories.POST(
 		"/new",
 		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		categorytransport.HandleCreateNewCategory(appContext),
+	)
+	categories.POST(
+		"",
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
+		categorytransport.HandleCreateCategoryList(appContext),
 	)
 	categories.GET("/:id", categorytransport.HandleGetCategory(appContext))
 	categories.GET("", categorytransport.HandleGetCategoryList(appContext))
@@ -150,7 +150,7 @@ func runService(
 		questiontransport.HandleCreateQuestionList(appContext),
 	)
 	questions.GET("", questiontransport.HandleGetQuestionList(appContext))
-	questions.GET("/:id", questiontransport.HandleGetQuestion(appContext))
+	questions.GET("/:id", questiontransport.HandleGetQuestionById(appContext))
 
 	// Answer API
 	answers := v1.Group(

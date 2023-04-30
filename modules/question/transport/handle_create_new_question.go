@@ -4,9 +4,13 @@ import (
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
+	categorystorage "nexon_quiz/modules/category/storage"
+	difficultystorage "nexon_quiz/modules/difficulty/storage"
 	questionbusiness "nexon_quiz/modules/question/business"
 	questionentity "nexon_quiz/modules/question/entity"
+	questionrepository "nexon_quiz/modules/question/repository"
 	questionstorage "nexon_quiz/modules/question/storage"
+	typestorage "nexon_quiz/modules/type/storage"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,21 +19,29 @@ func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		var newQuestion questionentity.QuestionCreate
 
-		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
-
 		if err := ctx.ShouldBindJSON(&newQuestion); err != nil {
-			panic(err)
+			panic(common.ErrorInvalidRequest(err))
 		}
 
-		newQuestion.OwnerId = requester.GetUserId()
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
 		db := appCtx.GetMainDBConnection()
 
-		storage := questionstorage.NewQuestionMySQLStorage(db)
+		questionStorage := questionstorage.NewQuestionMySQLStorage(db)
+		typeStorage := typestorage.NewTypeMySQLStorage(db)
+		difficultyStorage := difficultystorage.NewDifficultyMySQLStorage(db)
+		categoryStorage := categorystorage.NewCategoryMySQLStorage(db)
 
-		business := questionbusiness.NewCreateQuestionBusiness(storage, requester)
+		repository := questionrepository.NewCreateQuestionRepository(
+			questionStorage,
+			typeStorage,
+			difficultyStorage,
+			categoryStorage,
+		)
 
-		if err := business.CreateQuestion(ctx.Request.Context(), &newQuestion); err != nil {
+		business := questionbusiness.NewCreateQuestionBusiness(requester, repository)
+
+		if err := business.CreateNewQuestion(ctx.Request.Context(), &newQuestion); err != nil {
 			panic(err)
 		}
 

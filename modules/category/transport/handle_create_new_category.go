@@ -25,7 +25,10 @@ func HandleCreateNewCategory(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		business := categorybusiness.NewCreateCategoryBusiness(storage)
 
-		if err := business.CreateNewCategory(ctx.Request.Context(), &newCategory); err != nil {
+		if err := business.CreateNewCategory(
+			ctx.Request.Context(),
+			&newCategory,
+		); err != nil {
 			panic(err)
 		}
 

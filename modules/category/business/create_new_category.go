@@ -13,7 +13,7 @@ type CreateCategoryStorage interface {
 		category *categoryentity.CategoryCreate,
 	) error
 
-	FindCategory(
+	FindCategoryByCondition(
 		ctx context.Context,
 		condition map[string]interface{},
 		moreKeys ...string,
@@ -34,8 +34,6 @@ func (biz *createCategoryBusiness) CreateNewCategory(
 	ctx context.Context,
 	newCategory *categoryentity.CategoryCreate,
 ) error {
-	// currentCategory, err := biz.storage.FindCategory(ctx, map[string]interface{}{"content": })
-
 	if err := newCategory.Validate(); err != nil {
 		return common.NewCustomError(
 			err,
@@ -44,7 +42,20 @@ func (biz *createCategoryBusiness) CreateNewCategory(
 		)
 	}
 
-	newCategory.Prepare(newCategory.DeletedAt)
+	oldType, err := biz.storage.FindCategoryByCondition(
+		ctx,
+		map[string]interface{}{"content": newCategory.Content},
+	)
+
+	if err == nil && newCategory.Content == oldType.Content {
+		return common.NewCustomError(
+			err,
+			categoryentity.ErrorCategoryAlreadyExisted.Error(),
+			"ErrorCategoryAlreadyExisted",
+		)
+	}
+
+	newCategory.Prepare()
 
 	if err := biz.storage.InsertNewCategory(ctx, newCategory); err != nil {
 		return common.NewFullErrorResponse(

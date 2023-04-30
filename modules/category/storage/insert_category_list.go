@@ -8,7 +8,7 @@ import (
 
 func (s *categoryMySQLStorage) InsertCategoryList(
 	ctx context.Context,
-	newCategories []categoryentity.CategoryCreate,
+	newCategories categoryentity.CategoriesCreate,
 ) error {
 	db := s.db
 

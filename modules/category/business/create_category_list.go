@@ -2,15 +2,20 @@ package categorybusiness
 
 import (
 	"context"
-	"net/http"
 	"nexon_quiz/common"
 	categoryentity "nexon_quiz/modules/category/entity"
 )
 
 type CreateCategoryListStorage interface {
+	FindCategoryByCondition(
+		ctx context.Context,
+		condition map[string]interface{},
+		moreKeys ...string,
+	) (*categoryentity.Category, error)
+
 	InsertCategoryList(
 		ctx context.Context,
-		newCategories []categoryentity.CategoryCreate,
+		newCategories categoryentity.CategoriesCreate,
 	) error
 }
 
@@ -28,7 +33,7 @@ func NewCreateCategoryListBusiness(
 
 func (biz *createCategoryListBusiness) CreateCategoryList(
 	ctx context.Context,
-	newCategories []categoryentity.CategoryCreate,
+	newCategories categoryentity.CategoriesCreate,
 ) error {
 	for _, category := range newCategories {
 		if err := category.Validate(); err != nil {
@@ -38,14 +43,27 @@ func (biz *createCategoryListBusiness) CreateCategoryList(
 				"ErrorInvalidRequest",
 			)
 		}
+
+		oldType, err := biz.storage.FindCategoryByCondition(
+			ctx,
+			map[string]interface{}{"content": category.Content},
+		)
+
+		if err == nil && category.Content == oldType.Content {
+			return common.NewCustomError(
+				err,
+				categoryentity.ErrorCategoryAlreadyExisted.Error(),
+				"ErrorCategoryAlreadyExisted",
+			)
+		}
+
+		category.Prepare()
 	}
 
 	if err := biz.storage.InsertCategoryList(ctx, newCategories); err != nil {
-		return common.NewFullErrorResponse(
-			http.StatusInternalServerError,
+		return common.NewCustomError(
 			err,
 			categoryentity.ErrorCannotCreateCategoryList.Error(),
-			err.Error(),
 			"CannotCreateCategoryList",
 		)
 	}

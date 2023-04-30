@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func HandleGetQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleGetQuestionById(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := uuid.Parse(ctx.Param("id"))
 
@@ -25,7 +25,7 @@ func HandleGetQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		business := questionbusiness.NewFindQuestionBusiness(storage)
 
-		question, err := business.FindQuestion(
+		question, err := business.GetQuestionByCondition(
 			ctx.Request.Context(),
 			map[string]interface{}{"id": id},
 		)

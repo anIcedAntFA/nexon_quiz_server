@@ -15,15 +15,20 @@ func (s *questionMySQLStorage) FindQuestionList(
 ) ([]questionentity.Question, error) {
 	// requester := ctx.Value(common.CurrentUser).(common.Requester)
 
-	db := s.db.Table(questionentity.Question{}.TableName())
+	db := s.db.
+		Table(questionentity.Question{}.TableName()).
+		Where("deleted_at IS NULL")
 
 	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
 		return nil, common.ErrorDB(err)
 	}
 
+	db = db.
+		Preload("Answers")
+
 	if f := filter; f != nil {
-		if f.Type != "" {
-			db = db.Where("type = ?", f.Type)
+		if f.Type != nil {
+			db = db.Where("type in (?)", f.Type)
 		}
 
 		if f.Difficulty != "" {
@@ -35,9 +40,6 @@ func (s *questionMySQLStorage) FindQuestionList(
 		}
 	}
 
-	db = db.
-		Preload("Answers")
-
 	var offset int
 
 	var order string
@@ -46,7 +48,7 @@ func (s *questionMySQLStorage) FindQuestionList(
 		searchStr := fmt.Sprintf("%%%s%%", qp.Search)
 
 		if len(qp.Search) > 0 {
-			db = db.Where("content LIKE ? OR category LIKE ?", searchStr, searchStr)
+			db = db.Where("content LIKE ?", searchStr)
 		}
 
 		offset = (queryParams.CurrentPage - 1) * queryParams.PageSize
@@ -54,16 +56,16 @@ func (s *questionMySQLStorage) FindQuestionList(
 		order = fmt.Sprintf("%s %s", queryParams.SortBy, queryParams.OrderBy)
 	}
 
-	var questions []questionentity.Question
+	var data []questionentity.Question
 
 	if err := db.
 		Offset(offset).
 		Limit(queryParams.PageSize).
 		Order(order).
-		Find(&questions).
+		Find(&data).
 		Error; err != nil {
 		return nil, common.ErrorDB(err)
 	}
 
-	return questions, nil
+	return data, nil
 }

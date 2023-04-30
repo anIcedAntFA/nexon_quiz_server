@@ -3,7 +3,6 @@ package categoryentity
 import (
 	"nexon_quiz/common"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -38,7 +37,7 @@ func (CategoryCreate) TableName() string {
 	return Category{}.TableName()
 }
 
-func (urc *CategoryCreate) Prepare(deleted_at *time.Time) {
+func (urc *CategoryCreate) Prepare() {
 	urc.DeletedAt = nil
 }
 
@@ -52,6 +51,8 @@ func (urc *CategoryCreate) Validate() error {
 
 	return nil
 }
+
+type CategoriesCreate = []*CategoryCreate
 
 type CategoryUpdate struct {
 	common.SQLModel

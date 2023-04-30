@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (s *questionMySQLStorage) FindQuestion(
+func (s *questionMySQLStorage) FindQuestionByCondition(
 	ctx context.Context,
 	condition map[string]interface{},
 	moreKeys ...string,

@@ -36,7 +36,7 @@ func HandleGetCategory(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(
 			http.StatusOK,
-			"Get user role successfully",
+			"get question category successfully",
 			data,
 		))
 	}
