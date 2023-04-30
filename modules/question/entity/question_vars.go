@@ -4,7 +4,6 @@ import (
 	"nexon_quiz/common"
 	answerentity "nexon_quiz/modules/answer/entity"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -56,12 +55,16 @@ func (QuestionCreate) TableName() string {
 	return Question{}.TableName()
 }
 
-func (qc *QuestionCreate) Prepare(ownerId uuid.UUID, deleted_at *time.Time) {
+func (qc *QuestionCreate) Prepare(
+	ownerId uuid.UUID,
+	plusCore int,
+	minusScore int,
+	timePerQuestion int,
+) {
 	qc.OwnerId = ownerId
 	qc.PlusScore = 5
 	qc.MinusScore = 5
 	qc.Time = 40
-	qc.DeletedAt = nil
 }
 
 func (qc *QuestionCreate) Validate() error {

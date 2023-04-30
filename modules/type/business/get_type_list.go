@@ -52,7 +52,7 @@ func (biz *findTypeListBusiness) GetTypeList(
 	if err != nil {
 		return nil, nil, common.NewCustomError(
 			err,
-			err.Error(),
+			typeentity.ErrorCannotGetListType.Error(),
 			"ErrorCannotGetTypeList",
 		)
 	}

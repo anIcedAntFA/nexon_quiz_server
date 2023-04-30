@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
 	"nexon_quiz/components/tokenprovider/jwt"
@@ -69,7 +68,7 @@ func RequiredAuthorization(appCtx appctx.AppContext) gin.HandlerFunc {
 func ErrorWrongAuthorizationHeader(err error) *common.AppError {
 	return common.NewCustomError(
 		err,
-		fmt.Sprintf("wrong authorization header"),
-		fmt.Sprintf("ErrorWrongAuthorizationHeader"),
+		errors.New("wrong authorization header").Error(),
+		errors.New("ErrorWrongAuthorizationHeader").Error(),
 	)
 }

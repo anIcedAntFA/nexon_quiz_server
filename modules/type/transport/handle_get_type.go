@@ -1,17 +1,17 @@
-package questiontransport
+package typetransport
 
 import (
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
-	questionbusiness "nexon_quiz/modules/question/business"
-	questionstorage "nexon_quiz/modules/question/storage"
+	typebusiness "nexon_quiz/modules/type/business"
+	typestorage "nexon_quiz/modules/type/storage"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func HandleGetQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleGetTypeById(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		id, err := uuid.Parse(ctx.Param("id"))
 
@@ -21,12 +21,12 @@ func HandleGetQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 
-		storage := questionstorage.NewQuestionMySQLStorage(db)
+		storage := typestorage.NewTypeMySQLStorage(db)
 
-		business := questionbusiness.NewFindQuestionBusiness(storage)
+		business := typebusiness.NewFindTypeBusiness(storage)
 
-		question, err := business.FindQuestion(
-			ctx.Request.Context(),
+		data, err := business.GetTypeByCondition(
+			ctx,
 			map[string]interface{}{"id": id},
 		)
 
@@ -36,8 +36,8 @@ func HandleGetQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(
 			http.StatusOK,
-			"Get question successfully",
-			question,
+			"get question type successfully",
+			data,
 		))
 	}
 }

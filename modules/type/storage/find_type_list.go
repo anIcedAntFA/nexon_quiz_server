@@ -20,10 +20,8 @@ func (ts *typeMySQLStorage) FindTypeList(
 	}
 
 	if content := filter.Content; content != nil {
-		db = db.Where("content = ?", *content)
+		db = db.Where("content in (?)", *content)
 	}
-
-	var offset int
 
 	var order string
 
@@ -34,16 +32,13 @@ func (ts *typeMySQLStorage) FindTypeList(
 			db = db.Where("content LIKE ?", searchStr)
 		}
 
-		offset = (queryParams.CurrentPage - 1) * queryParams.PageSize
-
 		order = fmt.Sprintf("%s %s", queryParams.SortBy, queryParams.OrderBy)
 	}
 
 	var data []typeentity.Type
 
 	if err := db.
-		Offset(offset).
-		Limit(queryParams.PageSize).
+		Select("*").
 		Order(order).
 		Find(&data).
 		Error; err != nil {

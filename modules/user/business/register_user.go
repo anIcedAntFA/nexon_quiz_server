@@ -2,79 +2,35 @@ package userbusiness
 
 import (
 	"context"
-	"net/http"
 	"nexon_quiz/common"
 	userentity "nexon_quiz/modules/user/entity"
-
-	"github.com/google/uuid"
 )
 
-type RegisterUserStorage interface {
-	FindUser(
+type RegisterUserRepository interface {
+	RegisterUser(
 		ctx context.Context,
-		condition map[string]interface{},
-		moreInfo ...string,
-	) (*userentity.User, error)
-
-	InsertNewUser(ctx context.Context, newUser *userentity.UserCreate, moreKeys ...string) error
-}
-
-type Hasher interface {
-	Hash(data string) string
+		newUser *userentity.UserCreate,
+	) error
 }
 
 type registerUserBusiness struct {
-	storage RegisterUserStorage
-	hasher  Hasher
+	repository RegisterUserRepository
 }
 
-func NewRegisterUserBusiness(
-	storage RegisterUserStorage,
-	hasher Hasher,
-) *registerUserBusiness {
+func NewRegisterUserBusiness(repository RegisterUserRepository) *registerUserBusiness {
 	return &registerUserBusiness{
-		storage: storage,
-		hasher:  hasher,
+		repository: repository,
 	}
 }
 
-func (biz *registerUserBusiness) Register(
+func (biz *registerUserBusiness) RegisterUser(
 	ctx context.Context,
 	newUser *userentity.UserCreate,
-	moreKeys ...string,
 ) error {
-	user, _ := biz.storage.FindUser(ctx, map[string]interface{}{"email": newUser.Email})
-
-	if user != nil {
-		if user.DeletedAt != nil {
-			return userentity.ErrorUserDisabledOrBanned
-		}
-
-		return userentity.ErrorEmailExisted
-	}
-
-	if err := newUser.Validate(); err != nil {
+	if err := biz.repository.RegisterUser(ctx, newUser); err != nil {
 		return common.NewCustomError(
 			err,
-			err.Error(),
-			"ErrorInvalidRequest",
-		)
-	}
-
-	newUser.RoleId = uuid.MustParse(common.UserRole)
-
-	salt := common.GenerateSalt(50)
-
-	newUser.Password = biz.hasher.Hash(newUser.Password + salt)
-
-	newUser.Salt = salt
-
-	if err := biz.storage.InsertNewUser(ctx, newUser, "UserRole"); err != nil {
-		return common.NewFullErrorResponse(
-			http.StatusInternalServerError,
-			err,
 			userentity.ErrorCannotCreateUser.Error(),
-			err.Error(),
 			"ErrorCannotCreateUserRole",
 		)
 	}

@@ -3,7 +3,6 @@ package typeentity
 import (
 	"nexon_quiz/common"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -38,7 +37,7 @@ func (TypeCreate) TableName() string {
 	return Type{}.TableName()
 }
 
-func (urc *TypeCreate) Prepare(deleted_at *time.Time) {
+func (urc *TypeCreate) Prepare() {
 	urc.DeletedAt = nil
 }
 

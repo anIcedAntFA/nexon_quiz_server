@@ -15,10 +15,6 @@ func (urs *userRoleMySQLStorage) FindUserRole(
 ) (*userroleentity.UserRole, error) {
 	db := urs.db
 
-	for _, v := range moreKeys {
-		db = db.Preload(v)
-	}
-
 	var data userroleentity.UserRole
 
 	if err := db.Where(condition).First(&data).Error; err != nil {

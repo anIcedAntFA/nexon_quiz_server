@@ -14,12 +14,17 @@ type CreateQuestionStorage interface {
 }
 
 type createQuestionBusiness struct {
-	storage CreateQuestionStorage
+	storage   CreateQuestionStorage
+	requester common.Requester
 }
 
-func NewCreateQuestionBusiness(storage CreateQuestionStorage) *createQuestionBusiness {
+func NewCreateQuestionBusiness(
+	storage CreateQuestionStorage,
+	requester common.Requester,
+) *createQuestionBusiness {
 	return &createQuestionBusiness{
-		storage: storage,
+		storage:   storage,
+		requester: requester,
 	}
 }
 
@@ -28,11 +33,23 @@ func (biz *createQuestionBusiness) CreateQuestion(
 	newQuestion *questionentity.QuestionCreate,
 ) error {
 	if err := newQuestion.Validate(); err != nil {
-		return common.ErrorInvalidRequest(err)
+		return common.NewCustomError(
+			err,
+			err.Error(),
+			"ErrorInvalidRequest",
+		)
 	}
 
+	newQuestion.Prepare(biz.requester.GetRoleId(), 5, 5, 40)
+
+	// newQuestion.TypeId
+
 	if err := biz.storage.CreateQuestion(ctx, newQuestion); err != nil {
-		return common.ErrorCannotCreateEntity(questionentity.EntityName, err)
+		return common.NewCustomError(
+			err,
+			questionentity.ErrorCannotCreateQuestion.Error(),
+			"ErrorCannotCreateQuestion",
+		)
 	}
 
 	return nil

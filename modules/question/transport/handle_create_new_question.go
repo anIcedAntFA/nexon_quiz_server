@@ -25,9 +25,9 @@ func HandleCreateNewQuestion(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 
-		questionStorage := questionstorage.NewQuestionMySQLStorage(db)
+		storage := questionstorage.NewQuestionMySQLStorage(db)
 
-		business := questionbusiness.NewCreateQuestionBusiness(questionStorage)
+		business := questionbusiness.NewCreateQuestionBusiness(storage, requester)
 
 		if err := business.CreateQuestion(ctx.Request.Context(), &newQuestion); err != nil {
 			panic(err)

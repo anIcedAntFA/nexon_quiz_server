@@ -2,7 +2,6 @@ package questionbusiness
 
 import (
 	"context"
-	"net/http"
 	"nexon_quiz/common"
 	questionentity "nexon_quiz/modules/question/entity"
 
@@ -44,25 +43,23 @@ func (biz *createQuestionListBusiness) CreateQuestionList(
 			)
 		}
 
-		question.Prepare(biz.requester.GetUserId(), question.DeletedAt)
+		question.Prepare(biz.requester.GetUserId(), 5, 5, 40)
 	}
 
-	for _, questionValue := range newQuestions {
+	for _, question := range newQuestions {
 		id, _ := uuid.NewUUID()
-		questionValue.Id = uuid.UUID(id)
+		question.Id = uuid.UUID(id)
 
-		for _, answerValue := range *questionValue.Answers {
-			answerValue.QuestionId = questionValue.Id
+		for _, answer := range *question.Answers {
+			answer.QuestionId = question.Id
 		}
 	}
 
 	if err := biz.storage.InsertQuestionList(ctx, newQuestions); err != nil {
-		return common.NewFullErrorResponse(
-			http.StatusInternalServerError,
+		return common.NewCustomError(
 			err,
 			questionentity.ErrorCannotCreateQuestionList.Error(),
-			err.Error(),
-			"CannotCreateQuestionList",
+			"ErrorCannotCreateQuestionList",
 		)
 	}
 

@@ -9,12 +9,9 @@ import (
 func (s *userMySQLStorage) InsertNewUser(
 	ctx context.Context,
 	newUser *userentity.UserCreate,
-	moreKeys ...string,
 ) error {
 	//if u implement many action => open transaction & commit
 	db := s.db.Begin()
-
-	db = db.Preload("UserRole")
 
 	if err := db.Table(newUser.TableName()).Create(newUser).Error; err != nil {
 		//if err, call rollback before, if not, connection will be stuck here

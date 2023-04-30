@@ -5,6 +5,7 @@ import (
 	"nexon_quiz/common"
 	"nexon_quiz/components/tokenprovider"
 	userentity "nexon_quiz/modules/user/entity"
+	userrepository "nexon_quiz/modules/user/repository"
 )
 
 type LoginStorage interface {
@@ -18,14 +19,14 @@ type LoginStorage interface {
 type loginBusiness struct {
 	storage       LoginStorage
 	tokenProvider tokenprovider.Provider
-	hasher        Hasher
+	hasher        userrepository.Hasher
 	expiry        int
 }
 
 func NewLoginBusiness(
 	storage LoginStorage,
 	tokenProvider tokenprovider.Provider,
-	hasher Hasher,
+	hasher userrepository.Hasher,
 	expiry int,
 ) *loginBusiness {
 	return &loginBusiness{

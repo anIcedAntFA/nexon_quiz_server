@@ -8,7 +8,9 @@ import (
 	hasher "nexon_quiz/components/hasher"
 	userbusiness "nexon_quiz/modules/user/business"
 	userentity "nexon_quiz/modules/user/entity"
+	userrepository "nexon_quiz/modules/user/repository"
 	userstorage "nexon_quiz/modules/user/storage"
+	userrolestorage "nexon_quiz/modules/userrole/storage"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,13 +25,17 @@ func HandleRegisterUser(appCtx appctx.AppContext) func(*gin.Context) {
 
 		db := appCtx.GetMainDBConnection()
 
-		storage := userstorage.NewUserMySQLStorage(db)
+		userStorage := userstorage.NewUserMySQLStorage(db)
+
+		userRoleStorage := userrolestorage.NewUserRoleMySQLStorage(db)
 
 		md5 := hasher.NewMd5Hash()
 
-		business := userbusiness.NewRegisterUserBusiness(storage, md5)
+		repository := userrepository.NewRegisterUserRepository(userStorage, userRoleStorage, md5)
 
-		if err := business.Register(ctx.Request.Context(), &newUser); err != nil {
+		business := userbusiness.NewRegisterUserBusiness(repository)
+
+		if err := business.RegisterUser(ctx.Request.Context(), &newUser); err != nil {
 			panic(err)
 		}
 

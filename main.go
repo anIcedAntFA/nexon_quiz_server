@@ -79,7 +79,10 @@ func runService(
 	})
 
 	// User Role API only by Root Admin
-	role := v1.Group("/roles", middleware.RequiredRole(appContext, common.RootAdminRole))
+	role := v1.Group(
+		"/roles",
+		middleware.RequiredAuthorization(appContext),
+		middleware.RequiredRole(appContext, common.RootAdminRole))
 	role.POST("/new", userroletransport.HandleCreateNewUserRole(appContext))
 	role.GET("/:id", userroletransport.HandleGetUserRole(appContext))
 
@@ -89,15 +92,26 @@ func runService(
 	auth.POST("/authenticate", usertransport.HandleLoginUser(appContext))
 
 	// Question Type API
-	types := v1.Group("/types")
+	types := v1.Group("/types", middleware.RequiredAuthorization(appContext))
 	types.POST("",
 		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		typetransport.HandleCreateNewType(appContext),
 	)
 	types.GET("", typetransport.HandleGetTypeList(appContext))
+	types.GET("/:id", typetransport.HandleGetTypeById(appContext))
+	types.PATCH(
+		"/:id",
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
+		typetransport.HandleUpdateTypeById(appContext),
+	)
+	types.DELETE(
+		"/:id",
+		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
+		typetransport.HandleDeleteTypeById(appContext),
+	)
 
 	// Question Difficulty API
-	difficulties := v1.Group("/difficulties")
+	difficulties := v1.Group("/difficulties", middleware.RequiredAuthorization(appContext))
 	difficulties.POST("",
 		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		difficultytransport.HandleCreateNewDifficulty(appContext),
@@ -105,7 +119,7 @@ func runService(
 	difficulties.GET("", difficultytransport.HandleGetDifficultyList(appContext))
 
 	// Question Category API
-	categories := v1.Group("/categoriess")
+	categories := v1.Group("/categoriess", middleware.RequiredAuthorization(appContext))
 	categories.POST(
 		"",
 		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),

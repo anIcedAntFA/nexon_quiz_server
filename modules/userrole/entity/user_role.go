@@ -1,6 +1,7 @@
 package userroleentity
 
 import (
+	"errors"
 	"nexon_quiz/common"
 
 	"github.com/google/uuid"
@@ -14,7 +15,21 @@ const (
 	RoleUser
 )
 
-var allUserRoles = [3]UserRoleContent{RoleRootAdmin, RoleAdmin, RoleUser}
+var allUserRoles = [3]string{"root_admin", "admin", "user"}
+
+func (urc *UserRoleContent) String() string {
+	return allUserRoles[*urc]
+}
+
+func parseStringToUserRoleContent(str string) (UserRoleContent, error) {
+	for i := range allUserRoles {
+		if allUserRoles[i] == str {
+			return UserRoleContent(i), nil
+		}
+	}
+
+	return UserRoleContent(2), errors.New("invalid user role string")
+}
 
 type UserRole struct {
 	common.SQLModel
