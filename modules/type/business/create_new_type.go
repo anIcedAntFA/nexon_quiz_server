@@ -15,7 +15,7 @@ type CreateTypeStorage interface {
 
 	InsertNewType(
 		ctx context.Context,
-		category *typeentity.TypeCreate,
+		newType *typeentity.TypeCreate,
 	) error
 }
 
@@ -46,7 +46,7 @@ func (biz *createTypeBusiness) CreateNewType(
 		map[string]interface{}{"content": newType.Content},
 	)
 
-	if newType.Content == oldType.Content {
+	if err == nil && newType.Content == oldType.Content {
 		return common.NewCustomError(
 			err,
 			typeentity.ErrorTypeAlreadyExisted.Error(),

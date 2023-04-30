@@ -13,7 +13,9 @@ func (ts *typeMySQLStorage) FindTypeList(
 	queryParams *common.QueryParams,
 	moreKeys ...string,
 ) ([]typeentity.Type, error) {
-	db := ts.db.Table(typeentity.Type{}.TableName())
+	db := ts.db.
+		Table(typeentity.Type{}.TableName()).
+		Where("deleted_at IS NULL")
 
 	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
 		return nil, common.ErrorDB(err)

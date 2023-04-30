@@ -93,7 +93,7 @@ func runService(
 
 	// Question Type API
 	types := v1.Group("/types", middleware.RequiredAuthorization(appContext))
-	types.POST("",
+	types.POST("/new",
 		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		typetransport.HandleCreateNewType(appContext),
 	)
@@ -117,6 +117,7 @@ func runService(
 		difficultytransport.HandleCreateNewDifficulty(appContext),
 	)
 	difficulties.GET("", difficultytransport.HandleGetDifficultyList(appContext))
+	difficulties.GET("/:id", difficultytransport.HandleGetDifficultyById(appContext))
 
 	// Question Category API
 	categories := v1.Group("/categoriess", middleware.RequiredAuthorization(appContext))

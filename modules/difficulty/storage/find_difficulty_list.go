@@ -13,7 +13,9 @@ func (ds *difficultyMySQLStorage) FindDifficultyList(
 	queryParams *common.QueryParams,
 	moreKeys ...string,
 ) ([]difficultyentity.Difficulty, error) {
-	db := ds.db.Table(difficultyentity.Difficulty{}.TableName())
+	db := ds.db.
+		Table(difficultyentity.Difficulty{}.TableName()).
+		Where("deleted_at IS NULL")
 
 	if err := db.Count(&queryParams.TotalItems).Error; err != nil {
 		return nil, common.ErrorDB(err)
@@ -22,8 +24,6 @@ func (ds *difficultyMySQLStorage) FindDifficultyList(
 	if content := filter.Content; content != nil {
 		db = db.Where("content = ?", *content)
 	}
-
-	var offset int
 
 	var order string
 
@@ -34,16 +34,13 @@ func (ds *difficultyMySQLStorage) FindDifficultyList(
 			db = db.Where("content LIKE ?", searchStr)
 		}
 
-		offset = (queryParams.CurrentPage - 1) * queryParams.PageSize
-
 		order = fmt.Sprintf("%s %s", queryParams.SortBy, queryParams.OrderBy)
 	}
 
 	var data []difficultyentity.Difficulty
 
 	if err := db.
-		Offset(offset).
-		Limit(queryParams.PageSize).
+		Select("*").
 		Order(order).
 		Find(&data).
 		Error; err != nil {

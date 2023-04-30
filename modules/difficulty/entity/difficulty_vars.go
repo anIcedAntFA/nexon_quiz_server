@@ -3,7 +3,6 @@ package difficultyentity
 import (
 	"nexon_quiz/common"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -38,7 +37,7 @@ func (DifficultyCreate) TableName() string {
 	return Difficulty{}.TableName()
 }
 
-func (dc *DifficultyCreate) Prepare(deleted_at *time.Time) {
+func (dc *DifficultyCreate) Prepare() {
 	dc.DeletedAt = nil
 }
 
