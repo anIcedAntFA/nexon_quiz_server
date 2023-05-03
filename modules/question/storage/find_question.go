@@ -16,7 +16,7 @@ func (s *questionMySQLStorage) FindQuestionByCondition(
 	db := s.db
 
 	for _, v := range moreKeys {
-		db = db.Preload(v)
+		db = db.Preload(v, "deleted_at IS NULL")
 	}
 
 	var result questionentity.Question

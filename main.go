@@ -15,6 +15,7 @@ import (
 	typetransport "nexon_quiz/modules/type/transport"
 	usertransport "nexon_quiz/modules/user/transport"
 	userroletransport "nexon_quiz/modules/userrole/transport"
+	usersettingtransport "nexon_quiz/modules/usersetting/transport"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -165,6 +166,22 @@ func runService(
 		middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
 		answertransport.HandleCreateNewAnswer(appContext),
 	)
+
+	// User Setting API
+	userSetting := v1.Group("user/setting", middleware.RequiredAuthorization(appContext))
+	userSetting.POST("/new", usersettingtransport.HandleCreateNewUserSetting(appContext))
+	// userSetting.GET("", typetransport.HandleGetTypeList(appContext))
+	// userSetting.GET("/:id", typetransport.HandleGetTypeById(appContext))
+	// userSetting.PATCH(
+	// 	"/:id",
+	// 	middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
+	// 	typetransport.HandleUpdateTypeById(appContext),
+	// )
+	// userSetting.DELETE(
+	// 	"/:id",
+	// 	middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
+	// 	typetransport.HandleDeleteTypeById(appContext),
+	// )
 
 	router.Run()
 

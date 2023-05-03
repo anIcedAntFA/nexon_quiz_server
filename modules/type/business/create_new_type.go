@@ -60,7 +60,7 @@ func (biz *createTypeBusiness) CreateNewType(
 		return common.NewCustomError(
 			err,
 			typeentity.ErrorCannotCreateType.Error(),
-			"CannotCreateCategory",
+			"CannotCreateType",
 		)
 	}
 
