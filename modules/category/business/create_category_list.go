@@ -56,8 +56,6 @@ func (biz *createCategoryListBusiness) CreateCategoryList(
 				"ErrorCategoryAlreadyExisted",
 			)
 		}
-
-		category.Prepare()
 	}
 
 	if err := biz.storage.InsertCategoryList(ctx, newCategories); err != nil {

@@ -2,7 +2,6 @@ package usersettingentity
 
 import (
 	"nexon_quiz/common"
-	typeentity "nexon_quiz/modules/type/entity"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -10,9 +9,9 @@ import (
 
 type TypeSetting struct {
 	common.SQLModel
-	TypeId            uuid.UUID         `json:"type_id" gorm:"column:type_id;"`
-	UserTypeSettingId uuid.UUID         `json:"user_type_setting_id" gorm:"column:user_type_setting_id;"`
-	Types             []typeentity.Type `json:"types" gorm:"preload:false;"`
+	TypeId            uuid.UUID `json:"type_id" gorm:"column:type_id;"`
+	UserTypeSettingId uuid.UUID `json:"user_type_setting_id" gorm:"column:user_type_setting_id;"`
+	// Types             []typeentity.Type `json:"types" gorm:"preload:false;"`
 }
 
 func (TypeSetting) TableName() string {

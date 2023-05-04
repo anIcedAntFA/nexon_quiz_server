@@ -37,10 +37,6 @@ func (CategoryCreate) TableName() string {
 	return Category{}.TableName()
 }
 
-func (urc *CategoryCreate) Prepare() {
-	urc.DeletedAt = nil
-}
-
 func (urc *CategoryCreate) Validate() error {
 	content := urc.Content
 	content = strings.TrimSpace(content)

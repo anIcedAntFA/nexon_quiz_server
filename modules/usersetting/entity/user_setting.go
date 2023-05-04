@@ -17,7 +17,7 @@ type UserSetting struct {
 	CategorySettingId uuid.UUID `json:"category_setting_id" gorm:"column:category_setting_id;"`
 	// TypeSetting       typesettingentity.TypeSetting         `json:"type_settings" gorm:"preload:false;"`
 	// CategorySetting   categorysettingentity.CategorySetting `json:"category_settings" gorm:"preload:false;"`
-	TypeSettings []typeentity.Type `json:"type_settings" gorm:"many2many:type_settings;foreignKey:TypeSettingId;"`
+	TypeSettings []typeentity.Type `json:"type_settings" gorm:"many2many:type_settings;"`
 }
 
 func (UserSetting) TableName() string {

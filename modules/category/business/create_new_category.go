@@ -11,13 +11,7 @@ type CreateCategoryStorage interface {
 	InsertNewCategory(
 		ctx context.Context,
 		category *categoryentity.CategoryCreate,
-	) error
-
-	FindCategoryByCondition(
-		ctx context.Context,
-		condition map[string]interface{},
-		moreKeys ...string,
-	) (*categoryentity.Category, error)
+	) (int64, error)
 }
 
 type createCategoryBusiness struct {
@@ -42,12 +36,9 @@ func (biz *createCategoryBusiness) CreateNewCategory(
 		)
 	}
 
-	oldType, err := biz.storage.FindCategoryByCondition(
-		ctx,
-		map[string]interface{}{"content": newCategory.Content},
-	)
+	rowsAffected, err := biz.storage.InsertNewCategory(ctx, newCategory)
 
-	if err == nil && newCategory.Content == oldType.Content {
+	if rowsAffected < 1 {
 		return common.NewCustomError(
 			err,
 			categoryentity.ErrorCategoryAlreadyExisted.Error(),
@@ -55,9 +46,7 @@ func (biz *createCategoryBusiness) CreateNewCategory(
 		)
 	}
 
-	newCategory.Prepare()
-
-	if err := biz.storage.InsertNewCategory(ctx, newCategory); err != nil {
+	if err != nil {
 		return common.NewFullErrorResponse(
 			http.StatusInternalServerError,
 			err,

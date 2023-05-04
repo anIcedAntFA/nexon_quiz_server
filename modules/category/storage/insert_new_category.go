@@ -2,17 +2,20 @@ package categorystorage
 
 import (
 	"context"
-	"nexon_quiz/common"
 	categoryentity "nexon_quiz/modules/category/entity"
 )
 
 func (cs *categoryMySQLStorage) InsertNewCategory(
 	ctx context.Context,
 	category *categoryentity.CategoryCreate,
-) error {
-	if err := cs.db.Create(category).Error; err != nil {
-		return common.ErrorDB(err)
-	}
+) (int64, error) {
+	result := cs.db.Where(categoryentity.CategoryCreate{
+		Content: category.Content,
+	}).FirstOrCreate(category)
 
-	return nil
+	// if err != nil {
+	// 	return common.ErrorDB(err)
+	// }
+
+	return result.RowsAffected, nil
 }

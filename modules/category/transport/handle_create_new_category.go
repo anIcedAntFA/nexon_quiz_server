@@ -34,7 +34,7 @@ func HandleCreateNewCategory(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(
 			http.StatusCreated,
-			"Create new user role successfully",
+			"Create new question category successfully",
 			newCategory.Id,
 		))
 	}
