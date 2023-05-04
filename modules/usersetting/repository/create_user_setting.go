@@ -106,8 +106,8 @@ func (repo *createUserSettingRepository) CreateNewUserSetting(
 
 	for i := range newTypeSettings {
 		newTypeSettings[i] = typesettingentity.TypeSettingCreate{
-			TypeId:        userSettingRequest.TypeSettingIds[i],
-			TypeSettingId: typeSettingId,
+			TypeId:            userSettingRequest.TypeSettingIds[i],
+			UserTypeSettingId: typeSettingId,
 		}
 	}
 
@@ -139,8 +139,8 @@ func (repo *createUserSettingRepository) CreateNewUserSetting(
 
 	for i := range newCategoriesSettings {
 		newCategoriesSettings[i] = categorysettingentity.CategorySettingCreate{
-			CategoryId:        userSettingRequest.CategorySettingIds[i],
-			CategorySettingId: categorySettingId,
+			CategoryId:            userSettingRequest.CategorySettingIds[i],
+			UserCategorySettingId: categorySettingId,
 		}
 	}
 

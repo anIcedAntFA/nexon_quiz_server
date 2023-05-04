@@ -171,7 +171,7 @@ func runService(
 	userSetting := v1.Group("user/setting", middleware.RequiredAuthorization(appContext))
 	userSetting.POST("/new", usersettingtransport.HandleCreateNewUserSetting(appContext))
 	// userSetting.GET("", typetransport.HandleGetTypeList(appContext))
-	// userSetting.GET("/:id", typetransport.HandleGetTypeById(appContext))
+	userSetting.GET("/:id", usersettingtransport.HandleGetUserSettingById(appContext))
 	// userSetting.PATCH(
 	// 	"/:id",
 	// 	middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),

@@ -20,11 +20,11 @@ type findUserSettingBusiness struct {
 	storage FindUserSettingStorage
 }
 
-func NewFindTypeBusiness(storage FindUserSettingStorage) *findUserSettingBusiness {
+func NewFindUserSettingBusiness(storage FindUserSettingStorage) *findUserSettingBusiness {
 	return &findUserSettingBusiness{storage: storage}
 }
 
-func (biz *findUserSettingBusiness) GetTypeByCondition(
+func (biz *findUserSettingBusiness) GetUserSettingByCondition(
 	ctx context.Context,
 	condition map[string]interface{},
 	moreKeys ...string,
@@ -39,7 +39,7 @@ func (biz *findUserSettingBusiness) GetTypeByCondition(
 		return nil, common.NewCustomError(
 			err,
 			usersettingentity.ErrorUserSettingNotFound.Error(),
-			"ErrorCannotGetType",
+			"ErrorCannotGetUserSetting",
 		)
 	}
 
