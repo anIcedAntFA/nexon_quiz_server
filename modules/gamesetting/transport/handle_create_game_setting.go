@@ -1,4 +1,4 @@
-package usersettingtransport
+package gamesettingtransport
 
 import (
 	"net/http"
@@ -6,21 +6,21 @@ import (
 	"nexon_quiz/components/appctx"
 	categorystorage "nexon_quiz/modules/category/storage"
 	categorysettingstorage "nexon_quiz/modules/categorysetting/storage"
+	gamesettingbusiness "nexon_quiz/modules/gamesetting/business"
+	gamesettingentity "nexon_quiz/modules/gamesetting/entity"
+	gamesettingrepository "nexon_quiz/modules/gamesetting/repository"
+	gamesettingstorage "nexon_quiz/modules/gamesetting/storage"
 	typestorage "nexon_quiz/modules/type/storage"
 	typesettingstorage "nexon_quiz/modules/typesetting/storage"
-	usersettingbusiness "nexon_quiz/modules/usersetting/business"
-	usersettingentity "nexon_quiz/modules/usersetting/entity"
-	usersettingrepository "nexon_quiz/modules/usersetting/repository"
-	usersettingstorage "nexon_quiz/modules/usersetting/storage"
 
 	"github.com/gin-gonic/gin"
 )
 
-func HandleCreateNewUserSetting(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleCreateNewGameSetting(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		var userSettingRequest usersettingentity.UserSettingCreateRequest
+		var gamesettingRequest gamesettingentity.GameSettingCreateRequest
 
-		if err := ctx.ShouldBindJSON(&userSettingRequest); err != nil {
+		if err := ctx.ShouldBindJSON(&gamesettingRequest); err != nil {
 			panic(common.ErrorInvalidRequest(err))
 		}
 
@@ -32,29 +32,29 @@ func HandleCreateNewUserSetting(appCtx appctx.AppContext) gin.HandlerFunc {
 		typeSettingStorage := typesettingstorage.NewTypeSettingMySQLStorage(db)
 		categoryStorage := categorystorage.NewCategoryMySQLStorage(db)
 		categorySettingStorage := categorysettingstorage.NewCategorySettingMySQLStorage(db)
-		userSettingStorage := usersettingstorage.NewUserSettingMySQLStorage(db)
+		gameSettingStorage := gamesettingstorage.NewGameSettingMySQLStorage(db)
 
-		repository := usersettingrepository.NewCreateUserSettingRepository(
+		repository := gamesettingrepository.NewCreateGameSettingRepository(
 			typeStorage,
 			typeSettingStorage,
 			categoryStorage,
 			categorySettingStorage,
-			userSettingStorage,
+			gameSettingStorage,
 		)
 
-		business := usersettingbusiness.NewCreateUserSettingBusiness(requester, repository)
+		business := gamesettingbusiness.NewCreateGameSettingBusiness(requester, repository)
 
-		if err := business.CreateNewUserSetting(
+		if err := business.CreateNewGameSetting(
 			ctx.Request.Context(),
-			&userSettingRequest,
+			&gamesettingRequest,
 		); err != nil {
 			panic(err)
 		}
 
 		ctx.JSON(http.StatusCreated, common.SimpleSuccessResponse(
 			http.StatusCreated,
-			"Save user setting successfully",
-			userSettingRequest.Id,
+			"create user setting successfully",
+			gamesettingRequest.Id,
 		))
 	}
 }

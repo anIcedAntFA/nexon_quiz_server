@@ -11,11 +11,11 @@ import (
 	answertransport "nexon_quiz/modules/answer/transport"
 	categorytransport "nexon_quiz/modules/category/transport"
 	difficultytransport "nexon_quiz/modules/difficulty/transport"
+	gamesettingtransport "nexon_quiz/modules/gamesetting/transport"
 	questiontransport "nexon_quiz/modules/question/transport"
 	typetransport "nexon_quiz/modules/type/transport"
 	usertransport "nexon_quiz/modules/user/transport"
 	userroletransport "nexon_quiz/modules/userrole/transport"
-	usersettingtransport "nexon_quiz/modules/usersetting/transport"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -168,15 +168,11 @@ func runService(
 	)
 
 	// User Setting API
-	userSetting := v1.Group("user/setting", middleware.RequiredAuthorization(appContext))
-	userSetting.POST("/new", usersettingtransport.HandleCreateNewUserSetting(appContext))
+	gameSetting := v1.Group("game-setting", middleware.RequiredAuthorization(appContext))
+	gameSetting.POST("/new", gamesettingtransport.HandleCreateNewGameSetting(appContext))
 	// userSetting.GET("", typetransport.HandleGetTypeList(appContext))
-	userSetting.GET("/:id", usersettingtransport.HandleGetUserSettingById(appContext))
-	// userSetting.PATCH(
-	// 	"/:id",
-	// 	middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
-	// 	typetransport.HandleUpdateTypeById(appContext),
-	// )
+	gameSetting.GET("/:id", gamesettingtransport.HandleGetGameSettingById(appContext))
+	gameSetting.PATCH("/:id", gamesettingtransport.HandleUpdateGameSetting(appContext))
 	// userSetting.DELETE(
 	// 	"/:id",
 	// 	middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),

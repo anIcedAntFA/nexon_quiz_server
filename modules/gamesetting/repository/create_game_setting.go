@@ -1,4 +1,4 @@
-package userrepository
+package gamesettingrepository
 
 import (
 	"context"
@@ -8,28 +8,16 @@ import (
 	gamesettingentity "nexon_quiz/modules/gamesetting/entity"
 	typeentity "nexon_quiz/modules/type/entity"
 	typesettingentity "nexon_quiz/modules/typesetting/entity"
-	userentity "nexon_quiz/modules/user/entity"
-	userroleentity "nexon_quiz/modules/userrole/entity"
 
 	"github.com/google/uuid"
 )
 
-type RegisterUserStorage interface {
-	FindUser(
+type FindTypeStorage interface {
+	FindTypesByIds(
 		ctx context.Context,
-		condition map[string]interface{},
-		moreInfo ...string,
-	) (*userentity.User, error)
-
-	InsertNewUser(ctx context.Context, newUser *userentity.UserCreate) error
-}
-
-type UserRoleStorage interface {
-	FindUserRole(
-		ctx context.Context,
-		condition map[string]interface{},
+		condition []uuid.UUID,
 		moreKeys ...string,
-	) (*userroleentity.UserRole, error)
+	) ([]typeentity.Type, error)
 }
 
 type CreateTypeSettingStorage interface {
@@ -37,6 +25,14 @@ type CreateTypeSettingStorage interface {
 		ctx context.Context,
 		newTypeSettings []typesettingentity.TypeSettingCreate,
 	) error
+}
+
+type FindCategoryStorage interface {
+	FindCategoriesByIds(
+		ctx context.Context,
+		condition []uuid.UUID,
+		moreKeys ...string,
+	) ([]categoryentity.Category, error)
 }
 
 type CreateCategorySettingStorage interface {
@@ -53,81 +49,59 @@ type CreateGameSettingStorage interface {
 	) error
 }
 
-type registerUserRepository struct {
-	userStorage            RegisterUserStorage
-	userRoleStorage        UserRoleStorage
-	hasher                 Hasher
+type createGameSettingRepository struct {
+	typeStorage            FindTypeStorage
 	typeSettingStorage     CreateTypeSettingStorage
+	categoryStorage        FindCategoryStorage
 	categorySettingStorage CreateCategorySettingStorage
 	gameSettingStorage     CreateGameSettingStorage
 }
 
-type Hasher interface {
-	Hash(data string) string
-}
-
-func NewRegisterUserRepository(
-	userStorage RegisterUserStorage,
-	userRoleStorage UserRoleStorage,
-	hasher Hasher,
+func NewCreateGameSettingRepository(
+	typeStorage FindTypeStorage,
 	typeSettingStorage CreateTypeSettingStorage,
+	categoryStorage FindCategoryStorage,
 	categorySettingStorage CreateCategorySettingStorage,
 	gameSettingStorage CreateGameSettingStorage,
-) *registerUserRepository {
-	return &registerUserRepository{
-		userStorage:            userStorage,
-		userRoleStorage:        userRoleStorage,
-		hasher:                 hasher,
+) *createGameSettingRepository {
+	return &createGameSettingRepository{
+		typeStorage:            typeStorage,
 		typeSettingStorage:     typeSettingStorage,
+		categoryStorage:        categoryStorage,
 		categorySettingStorage: categorySettingStorage,
 		gameSettingStorage:     gameSettingStorage,
 	}
 }
 
-func (repo *registerUserRepository) RegisterUser(
+func (repo *createGameSettingRepository) CreateNewGameSetting(
 	ctx context.Context,
-	newUser *userentity.UserCreate,
 	gameSettingRequest *gamesettingentity.GameSettingCreateRequest,
 ) error {
-	user, _ := repo.userStorage.FindUser(
+	// Validate type setting request is valid
+	oldTypes, err := repo.typeStorage.FindTypesByIds(
 		ctx,
-		map[string]interface{}{"email": newUser.Email},
+		gameSettingRequest.TypeSettingIds,
 	)
 
-	if user != nil {
-		if user.DeletedAt != nil {
-			return userentity.ErrorUserDisabledOrBanned
-		}
-
-		return userentity.ErrorEmailExisted
-	}
-
-	if err := newUser.Validate(); err != nil {
+	if len(oldTypes) != len(gameSettingRequest.TypeSettingIds) {
 		return common.NewCustomError(
 			err,
-			err.Error(),
-			"ErrorInvalidRequest",
+			typeentity.ErrorTypeInvalid.Error(),
+			"ErrorTypeSettingInvalid",
 		)
 	}
 
-	userRole, _ := repo.userRoleStorage.FindUserRole(
+	// Validate category setting request is valid
+	oldCategories, err := repo.categoryStorage.FindCategoriesByIds(
 		ctx,
-		map[string]interface{}{"content": 2},
+		gameSettingRequest.CategorySettingIds,
 	)
 
-	newUser.RoleId = userRole.Id
-
-	salt := common.GenerateSalt(50)
-
-	newUser.Password = repo.hasher.Hash(newUser.Password + salt)
-
-	newUser.Salt = salt
-
-	if err := repo.userStorage.InsertNewUser(ctx, newUser); err != nil {
+	if len(oldCategories) != len(gameSettingRequest.CategorySettingIds) {
 		return common.NewCustomError(
 			err,
-			userentity.ErrorCannotCreateUser.Error(),
-			"ErrorCannotCreateUserRole",
+			categoryentity.ErrorCategoryInvalid.Error(),
+			"ErrorCategorySettingInvalid",
 		)
 	}
 
@@ -138,7 +112,7 @@ func (repo *registerUserRepository) RegisterUser(
 
 	newGameSetting := gamesettingentity.GameSettingCreate{
 		SQLModel:     common.NewSQLModel(gameSettingId),
-		UserId:       newUser.Id,
+		UserId:       gameSettingRequest.UserId,
 		Quantity:     gameSettingRequest.Quantity,
 		DifficultyId: gameSettingRequest.DifficultyId,
 	}

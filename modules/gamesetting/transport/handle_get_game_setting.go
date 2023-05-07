@@ -1,17 +1,17 @@
-package usersettingtransport
+package gamesettingtransport
 
 import (
 	"net/http"
 	"nexon_quiz/common"
 	"nexon_quiz/components/appctx"
-	usersettingbusiness "nexon_quiz/modules/usersetting/business"
-	usersettingstorage "nexon_quiz/modules/usersetting/storage"
+	gamesettingbusiness "nexon_quiz/modules/gamesetting/business"
+	gamesettingstorage "nexon_quiz/modules/gamesetting/storage"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
-func HandleGetUserSettingById(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleGetGameSettingById(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
@@ -23,11 +23,11 @@ func HandleGetUserSettingById(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		db := appCtx.GetMainDBConnection()
 
-		storage := usersettingstorage.NewUserSettingMySQLStorage(db)
+		storage := gamesettingstorage.NewGameSettingMySQLStorage(db)
 
-		business := usersettingbusiness.NewFindUserSettingBusiness(storage)
+		business := gamesettingbusiness.NewFindGameSettingBusiness(storage)
 
-		data, err := business.GetUserSettingByCondition(
+		data, err := business.GetGameSettingByCondition(
 			ctx,
 			map[string]interface{}{"id": id},
 		)

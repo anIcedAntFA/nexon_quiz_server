@@ -7,16 +7,10 @@ import (
 )
 
 type CreateTypeStorage interface {
-	FindTypeByCondition(
-		ctx context.Context,
-		condition map[string]interface{},
-		moreKeys ...string,
-	) (*typeentity.Type, error)
-
 	InsertNewType(
 		ctx context.Context,
 		newType *typeentity.TypeCreate,
-	) error
+	) (int64, error)
 }
 
 type createTypeBusiness struct {
@@ -24,9 +18,7 @@ type createTypeBusiness struct {
 }
 
 func NewCreateTypeBusiness(storage CreateTypeStorage) *createTypeBusiness {
-	return &createTypeBusiness{
-		storage: storage,
-	}
+	return &createTypeBusiness{storage: storage}
 }
 
 func (biz *createTypeBusiness) CreateNewType(
@@ -41,12 +33,9 @@ func (biz *createTypeBusiness) CreateNewType(
 		)
 	}
 
-	oldType, err := biz.storage.FindTypeByCondition(
-		ctx,
-		map[string]interface{}{"content": newType.Content},
-	)
+	rowsAffected, err := biz.storage.InsertNewType(ctx, newType)
 
-	if err == nil && newType.Content == oldType.Content {
+	if rowsAffected < 1 {
 		return common.NewCustomError(
 			err,
 			typeentity.ErrorTypeAlreadyExisted.Error(),
@@ -54,13 +43,11 @@ func (biz *createTypeBusiness) CreateNewType(
 		)
 	}
 
-	newType.Prepare()
-
-	if err := biz.storage.InsertNewType(ctx, newType); err != nil {
+	if err != nil {
 		return common.NewCustomError(
 			err,
 			typeentity.ErrorCannotCreateType.Error(),
-			"CannotCreateType",
+			"ErrorCannotCreateType",
 		)
 	}
 
