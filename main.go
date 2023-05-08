@@ -167,17 +167,11 @@ func runService(
 		answertransport.HandleCreateNewAnswer(appContext),
 	)
 
-	// User Setting API
+	// Game Setting API
 	gameSetting := v1.Group("game-setting", middleware.RequiredAuthorization(appContext))
 	gameSetting.POST("/new", gamesettingtransport.HandleCreateNewGameSetting(appContext))
-	// userSetting.GET("", typetransport.HandleGetTypeList(appContext))
-	gameSetting.GET("/:id", gamesettingtransport.HandleGetGameSettingById(appContext))
+	gameSetting.GET("", gamesettingtransport.HandleGetGameSettingByUserId(appContext))
 	gameSetting.PATCH("/:id", gamesettingtransport.HandleUpdateGameSetting(appContext))
-	// userSetting.DELETE(
-	// 	"/:id",
-	// 	middleware.RequiredRole(appContext, common.RootAdminRole, common.AdminRole),
-	// 	typetransport.HandleDeleteTypeById(appContext),
-	// )
 
 	router.Run()
 

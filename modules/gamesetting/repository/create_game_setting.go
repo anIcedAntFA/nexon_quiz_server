@@ -152,7 +152,7 @@ func (repo *createGameSettingRepository) CreateNewGameSetting(
 	// create category setting
 	newCategorySettings := make(
 		[]categorysettingentity.CategorySettingCreate,
-		len(gameSettingRequest.TypeSettingIds),
+		len(gameSettingRequest.CategorySettingIds),
 	)
 
 	for i := range newCategorySettings {

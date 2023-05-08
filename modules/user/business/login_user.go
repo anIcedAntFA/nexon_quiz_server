@@ -56,13 +56,21 @@ func (biz *loginBusiness) Login(
 	}
 
 	if err != nil {
-		return nil, nil, userentity.ErrorEmailOrPasswordInvalid
+		return nil, nil, common.NewCustomError(
+			err,
+			userentity.ErrorEmailOrPasswordInvalid.Error(),
+			"ErrorEmailOrPasswordInvalid",
+		)
 	}
 
 	hashedPassword := biz.hasher.Hash(data.Password + user.Salt)
 
 	if user.Password != hashedPassword {
-		return nil, nil, userentity.ErrorEmailOrPasswordInvalid
+		return nil, nil, common.NewCustomError(
+			err,
+			userentity.ErrorEmailOrPasswordInvalid.Error(),
+			"ErrorEmailOrPasswordInvalid",
+		)
 	}
 
 	payload := tokenprovider.TokenPayload{

@@ -14,17 +14,10 @@ import (
 	typesettingstorage "nexon_quiz/modules/typesetting/storage"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func HandleUpdateGameSetting(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		id, err := uuid.Parse(ctx.Param("id"))
-
-		if err != nil {
-			panic(common.ErrorInvalidRequest(err))
-		}
-
 		var gamesettingRequest gamesettingentity.GameSettingCreateRequest
 
 		if err := ctx.ShouldBindJSON(&gamesettingRequest); err != nil {
@@ -53,7 +46,7 @@ func HandleUpdateGameSetting(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		if err := business.UpdateNewGameSetting(
 			ctx.Request.Context(),
-			id,
+			requester.GetUserId(),
 			&gamesettingRequest,
 		); err != nil {
 			panic(err)

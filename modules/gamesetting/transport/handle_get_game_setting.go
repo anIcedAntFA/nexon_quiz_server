@@ -8,18 +8,11 @@ import (
 	gamesettingstorage "nexon_quiz/modules/gamesetting/storage"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
-func HandleGetGameSettingById(appCtx appctx.AppContext) gin.HandlerFunc {
+func HandleGetGameSettingByUserId(appCtx appctx.AppContext) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		// requester := ctx.MustGet(common.CurrentUser).(common.Requester)
-
-		id, err := uuid.Parse(ctx.Param("id"))
-
-		if err != nil {
-			panic(common.ErrorInvalidRequest(err))
-		}
+		requester := ctx.MustGet(common.CurrentUser).(common.Requester)
 
 		db := appCtx.GetMainDBConnection()
 
@@ -29,7 +22,7 @@ func HandleGetGameSettingById(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		data, err := business.GetGameSettingByCondition(
 			ctx,
-			map[string]interface{}{"id": id},
+			map[string]interface{}{"user_id": requester.GetUserId()},
 		)
 
 		if err != nil {
@@ -38,7 +31,7 @@ func HandleGetGameSettingById(appCtx appctx.AppContext) gin.HandlerFunc {
 
 		ctx.JSON(http.StatusOK, common.SimpleSuccessResponse(
 			http.StatusOK,
-			"get user setting successfully",
+			"get game setting successfully",
 			data,
 		))
 	}

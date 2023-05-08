@@ -16,15 +16,13 @@ func (gss *gameSettingMySQLStorage) FindGameSettingByCondition(
 ) (*gamesettingentity.GameSetting, error) {
 	db := gss.db
 
-	// for _, v := range moreKeys {
-	// 	db = db.Preload(v, "deleted_at IS NULL")
-	// }
-
-	db = db.Preload("DifficultySetting")
+	for _, v := range moreKeys {
+		db = db.Preload(v, "deleted_at IS NULL")
+	}
 
 	var data gamesettingentity.GameSetting
 
-	if err := gss.db.Where(condition).First(&data).Error; err != nil {
+	if err := db.Where(condition).First(&data).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, gamesettingentity.ErrorGameSettingNotFound
 		}

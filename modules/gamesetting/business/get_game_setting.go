@@ -29,7 +29,13 @@ func (biz *findGameSettingBusiness) GetGameSettingByCondition(
 	condition map[string]interface{},
 	moreKeys ...string,
 ) (*gamesettingentity.GameSetting, error) {
-	data, err := biz.storage.FindGameSettingByCondition(ctx, condition, "DifficultySetting")
+	data, err := biz.storage.FindGameSettingByCondition(
+		ctx,
+		condition,
+		"TypeSettings",
+		"DifficultySetting",
+		"CategorySettings",
+	)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
